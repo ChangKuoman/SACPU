@@ -12,7 +12,6 @@ from flask import (
 )
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import null
 
 # configurations
 app = Flask(__name__)
