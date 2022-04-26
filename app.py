@@ -29,7 +29,27 @@ class User(db.Model):
 
 
     def __repr__(self):
-        return f'username: id={self.username}'
+        return f'user: {self.username}'
+
+class MotherBoard(db.Model):
+    __tablename__ = 'motherboard'
+    id = db.Column(db.Integer, primary_key=True)
+    price = db.Column(db.Float, nullable=False)
+    name = db.Column(db.String(), nullable=False)
+    description = db.Column(db.Text(), nullable=False)
+
+    def __repr__(self):
+        return f'motherboard: {self.name}'
+
+class Component(db.Model):
+    __tablename__ = 'component'
+    id = db.Column(db.Integer, primary_key=True)
+    price = db.Column(db.Float, nullable=False)
+    name = db.Column(db.String(), nullable=False)
+    description = db.Column(db.Text(), nullable=False)
+
+    def __repr__(self):
+        return f'component: {self.name}'
 
 db.create_all()
 
