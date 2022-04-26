@@ -16,7 +16,7 @@ from sqlalchemy import null
 
 # configurations
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/sacpu'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -37,6 +37,8 @@ class MotherBoard(db.Model):
     price = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
+    dateCreated = db.Column(db.DateTime, nullable=False)
+    dateModified = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
         return f'motherboard: {self.name}'
@@ -46,7 +48,10 @@ class Component(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(), nullable=False)
+    componentType = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
+    dateCreated = db.Column(db.DateTime, nullable=False)
+    dateModified = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
         return f'component: {self.name}'
@@ -54,9 +59,21 @@ class Component(db.Model):
 db.create_all()
 
 # controllers
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    
+    return render_template('index.html')
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    return render_template('login.html')
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    return render_template('register.html')
+
+@app.route('/simulator', methods=['POST', 'GET'])
+def simulator():
+    return render_template('simulator.html')
 
 #run
 if __name__ == '__main__':
