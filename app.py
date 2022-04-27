@@ -14,7 +14,7 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 
 # configurations
-app = Flask(__name__)
+app = Flask(__name__, static_folder="/home/chang/Escritorio/SACPU/templates/static")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/sacpu'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -76,4 +76,4 @@ def simulator():
 
 #run
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5002)
