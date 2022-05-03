@@ -12,16 +12,18 @@ from flask import (
 )
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 # configurations
 app = Flask(__name__, static_folder="/home/chang/Escritorio/SACPU/templates/static")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/sacpu'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # models
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = 'userinfo'
     username = db.Column(db.String(), primary_key=True)
     password = db.Column(db.String(), nullable=False)
     role = db.Column(db.String(), nullable=False)
@@ -54,8 +56,6 @@ class Component(db.Model):
 
     def __repr__(self):
         return f'component: {self.name}'
-
-db.create_all()
 
 # controllers
 @app.route('/', methods=['POST', 'GET'])
