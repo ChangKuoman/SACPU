@@ -1,32 +1,42 @@
+html{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.fondo{
+    background: #f5f573;
+}
+
 .header {
     align-items: center;
     display: flex;
-
     justify-content: center;
-
     flex-direction: row;
 
     background: #ffff99;
     color: #333;
 }
+
 .boton_login {
     background-color: #ff8000;
     color: white;
     padding: 15px 25px;
     text-decoration: none;
 }
+
 .boton_loging:hover {
    background-color: #ff8000;
 }
+
 .boton_div{
-    padding: 15px 25px;
-    margin: 5px;
+    padding: 15px 0px;
+    margin: 5px 30px;
 }
+
 .icono{
     margin: 0px 20px;
 }
+
 .presentation{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 22px;
     margin: 10px;
 }
