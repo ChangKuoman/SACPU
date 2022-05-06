@@ -1,5 +1,4 @@
 # imports
-import sys
 from crypt import methods
 from flask import (
     jsonify,
@@ -10,9 +9,9 @@ from flask import (
     redirect,
     url_for
 )
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from sqlalchemy import func
 
 # configurations
 app = Flask(__name__, static_folder="/home/chang/Escritorio/SACPU/templates/static")
@@ -27,7 +26,7 @@ class User(db.Model):
     username = db.Column(db.String(), primary_key=True)
     password = db.Column(db.String(), nullable=False)
     role = db.Column(db.String(), nullable=False)
-
+    dateCreated = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
         return f'user: {self.username}'
@@ -69,6 +68,27 @@ def login():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     return render_template('register.html')
+
+@app.route('/register/create', methods=['POST', 'GET'])
+def register_create():
+    error = False
+    try:
+        username = request.get_json()['username']
+        password = request.get_json()['password']
+        user = User(username=username, password=password, role="user", dateCreated=func.now())
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        error = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    if error:
+        abort(500)
+    else:
+        return redirect(url_for('simulator'))
 
 @app.route('/simulator', methods=['POST', 'GET'])
 def simulator():
