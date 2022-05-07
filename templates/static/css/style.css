@@ -40,3 +40,34 @@ html{
     font-size: 22px;
     margin: 10px;
 }
+
+.home_button{
+    text-decoration: none;
+    color: black;
+}
+
+.center_all{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transform: translateY(50%);
+}
+
+.form_div{
+    margin: 10px;
+    padding: 10px;
+    background-color: #ff8000;
+}
+
+.center{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    padding: 10px;
+}
+
+.image_div{
+    margin: 20px;
+}
