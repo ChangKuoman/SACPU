@@ -92,14 +92,10 @@ def register_create():
         username = request.form.get("username", '')
         password = request.form.get("password", '')
         password_check = request.form.get("password_check", '')
-        if password == password_check:
-            if check_password_difficulty(password) and len(username) > 0:
-                user = User(username=username, password=password, role="user", dateCreated=func.now())
-                db.session.add(user)
-                db.session.commit()
-            else:
-                error = True
-                db.session.rollback()
+        if password == password_check and check_password_difficulty(password) and len(username) > 0:
+            user = User(username=username, password=password, role="user", dateCreated=func.now())
+            db.session.add(user)
+            db.session.commit()
         else:
             error = True
             db.session.rollback()
