@@ -40,3 +40,14 @@ html{
     font-size: 22px;
     margin: 10px;
 }
+
+.home_button{
+    text-decoration: none;
+    color: black;
+}
+
+.center_all{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}

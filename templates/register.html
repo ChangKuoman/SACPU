@@ -8,10 +8,27 @@
     </head>
     
     <body class="fondo">
-        <div>
+        <header class="header">
+            <a href="/" target="_self">
+                <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            </a>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - Simulador de Armado de CPU
+                </h1>
+            </a>
+
+
+        </header>
+
+        <div class="center_all">
             <form action="/register/create" method="POST">
+                <p>USERNAME</p>
                 <input type="text" name="username" description="username"/>
+                <p>PASSWORD</p>
                 <input type="password" name="password" description="password"/>
+                <p>ENTER PASSWORD AGAIN</p>
+                <input type="password" name="password_check" description="password_check"/>
                 <input type="submit" value="Create"/>
             </form>
         </div>
