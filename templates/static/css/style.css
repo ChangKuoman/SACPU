@@ -6,7 +6,40 @@ html{
     background: #f5f573;
 }
 
+.boton_loging:hover {
+   background-color: #ff8000;
+}
+
+.icono{
+    margin: 0px 20px;
+}
+
+.text-simulator {
+    font-size: 22px;
+    margin: 3px;
+}
+
+
+
+.contenedor-global {
+    width: 80%;
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.presentation{
+    width: 100%;
+    font-size: 18px;
+    background: #fff;
+    padding: 20px;
+    align-items: center;
+    margin: 10px;
+    box-sizing: border-box;
+}
+
 .header {
+    width: 100%;
     align-items: center;
     display: flex;
     justify-content: center;
@@ -16,27 +49,35 @@ html{
     color: #333;
 }
 
-.boton_login {
-    background-color: #ff8000;
-    color: white;
-    padding: 15px 25px;
-    text-decoration: none;
-}
-
-.boton_loging:hover {
-   background-color: #ff8000;
-}
-
-.boton_div{
-    padding: 15px 0px;
-    margin: 5px 30px;
-}
-
 .icono{
+    width: 10%;
+    height: auto;
     margin: 0px 20px;
 }
 
-.presentation{
-    font-size: 22px;
-    margin: 10px;
+.nombre-empresa {
+    width: 50%;
+}
+
+.contenedor-botones {
+    width: 40%;
+}
+
+.boton_div{
+    width: 50%;
+    padding: 15px;
+    margin: 5px 30px;
+    background-color: #ff8000;
+    color: white;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+
+@media screen and (max-widht: 800px) {
+    
+}
+
+@media screen and (max-widht: 400px) {
+
 }
