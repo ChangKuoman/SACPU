@@ -56,9 +56,13 @@ class Component(db.Model):
     def __repr__(self):
         return f'component: {self.name}'
 
+# global variables
+actual_user = ''
+
 # controllers
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    actual_user = ''
     return render_template('index.html')
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -84,6 +88,8 @@ def login_enter():
     if error:
         abort(500)
     else:
+        global actual_user
+        actual_user = user.username
         return redirect(url_for('simulator'))
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -134,7 +140,11 @@ def register_create():
 
 @app.route('/simulator', methods=['POST', 'GET'])
 def simulator():
-    return render_template('simulator.html')
+    global actual_user
+    if actual_user != '':
+        return render_template('simulator.html')
+    else:
+        abort(401)
 
 @app.errorhandler(404)
 def error_404(error):
