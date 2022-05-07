@@ -6,9 +6,6 @@ html{
     background: #f5f573;
 }
 
-.boton_loging:hover {
-   background-color: #ff8000;
-}
 
 .icono{
     margin: 0px 20px;
@@ -73,6 +70,9 @@ html{
     box-sizing: border-box;
 }
 
+.boton_div:hover {
+    background-color: #ff8000;
+ }
 
 @media screen and (max-widht: 800px) {
     
