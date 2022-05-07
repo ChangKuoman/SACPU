@@ -115,6 +115,10 @@ def register_create():
 def simulator():
     return render_template('simulator.html')
 
+@app.errorhandler(404)
+def error_404(error):
+    return render_template('404.html'), 404
+
 #run
 if __name__ == '__main__':
     app.run(debug=True, port=5002)
