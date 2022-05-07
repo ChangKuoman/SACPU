@@ -1,9 +1,27 @@
 <html>
-    <title>
-        SACPU - Simulador de Armado de CPU
-    </title>
+    <head>
+        <title>
+            SACPU - Simulador de Armado de CPU
+        </title>
+        <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
+        <link rel="stylesheet" href="static/css/style.css">
+    </head>
 
-    <div>
-        simulator
-    </div>
+    <body class="fondo">
+        <header class="header">
+            <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            <h1>
+                BIENVENIDO, PRIMERO SELECCIONA UNA TARJETA MADRE
+            </h1>
+        </header>
+        <div class="text-simulator">
+            <p>TARJETA MADRE</p>
+            <form action="/simulator" method="POST">
+                <select name="motherboard" id="motherboard">
+                    <option value="MB MSI X570S EDGE MAX WIFI">MB MSI X570S EDGE MAX WIFI</option>
+                    <option value="MOTHERBOARD ASUS PRIME B460M-A R2.0 LGA1200, DDR4, SATA 6GB/S, HDMI, DVI-D, USB 3.2 GEN1">MOTHERBOARD ASUS PRIME B460M-A R2.0 LGA1200, DDR4, SATA 6GB/S, HDMI, DVI-D, USB 3.2 GEN1</option>
+                </select>
+            </form>
+        </div>
+    </body>
 </html>

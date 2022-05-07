@@ -5,32 +5,35 @@
         </title>
         <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
         <link rel="stylesheet" href="static/css/style.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
+
     </head>
 
     <body class="fondo">
-        <header class="header">
-            <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
-            <h1>
-                SACPU - Simulador de Armado de CPU
-            </h1>
-
-
-            <div class="boton_div">
-                <a class="boton_login" href="/login" target="_self">
-                    INICIAR SESIÓN
-                </a>
+        <div class="contenedor-global">
+            <div class="header">
+                <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+                <h1 class="nombre-empresa">
+                    SACPU - Simulador de Armado de CPU
+                </h1>
+                <div class="contenedor-botones">
+                    <div class="boton_div">
+                        <a href="/login" target="_self">
+                            INICIAR SESIÓN
+                        </a>
+                    </div>
+        
+                    <div class="boton_div">
+                        <a href="/register" target="_self">
+                            REGISTRARSE
+                        </a>
+                    </div>
+                </div>
             </div>
-
-            <div class="boton_div">
-                <a class="boton_login" href="/register" target="_self">
-                    REGISTRARSE
-                </a>
+    
+            <div class="presentation">
+                SACPU es una página web para simular el armado de una computadora teniendo como pieza base una placa madre.
             </div>
-        </header>
-
-        <div class="presentation">
-            SACPU es una página web para simular el armado de una computadora teniendo como pieza base una placa madre.
         </div>
-
     </body>
 </html>

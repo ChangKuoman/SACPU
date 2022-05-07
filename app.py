@@ -14,8 +14,8 @@ from flask_migrate import Migrate
 from sqlalchemy import func
 
 # configurations
-app = Flask(__name__, static_folder="/home/chang/Escritorio/SACPU/templates/static")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/sacpu'
+app = Flask(__name__, static_folder="/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
