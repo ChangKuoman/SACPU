@@ -73,8 +73,8 @@ def register():
 def register_create():
     error = False
     try:
-        username = request.get_json()['username']
-        password = request.get_json()['password']
+        username = request.form.get("username", '')
+        password = request.form.get("password", '')
         user = User(username=username, password=password, role="user", dateCreated=func.now())
         db.session.add(user)
         db.session.commit()

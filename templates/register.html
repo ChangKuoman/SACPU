@@ -9,14 +9,12 @@
     
     <body class="fondo">
         <div>
-            <form id="form">
-                <input type="text" id="username" description="username"/>
-                <input type="password" id="password" description="password"/>
+            <form action="/register/create" method="POST">
+                <input type="text" name="username" description="username"/>
+                <input type="password" name="password" description="password"/>
                 <input type="submit" value="Create"/>
             </form>
         </div>
     </body>
-
-    <script src="static/js/register.js"></script>
 
 </html>
