@@ -65,6 +65,27 @@ def index():
 def login():
     return render_template('login.html')
 
+@app.route('/login/enter', methods=['POST', 'GET'])
+def login_enter():
+    error = False
+    try:
+        username = request.form.get('username', '')
+        password = request.form.get('password', '')
+        user = User.query.filter_by(username=username).first()
+        if user.password != password:
+            error = True
+    except Exception as e:
+        error = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+
+    if error:
+        abort(500)
+    else:
+        return redirect(url_for('simulator'))
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     return render_template('register.html')
@@ -109,7 +130,7 @@ def register_create():
     if error:
         abort(500)
     else:
-        return redirect(url_for('simulator'))
+        return redirect(url_for('login'))
 
 @app.route('/simulator', methods=['POST', 'GET'])
 def simulator():
