@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <title>
+            SACPU - Admin
+        </title>
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
+
+    </head>
+
+    <body>
+        <p id="option" class="hidden">{{action}}</p>
+        <div class="hidden" id="create">
+            <p>CREATE</p>
+            <form>
+               
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+
+        <div class="hidden" id="update">
+            <p>UPDATE</p>
+            <form>
+               
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+
+        <div class="hidden" id="delete">
+            <p>DELETE</p>
+            <form>
+               
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+
+    </body>
+
+    <script>      
+        const option = document.getElementById("option").innerHTML;
+        console.log(option);
+        if (option === "create"){
+            console.log("CREATE");
+            document.getElementById("create").className = '';
+        }
+        else if (option === "update"){
+            console.log("UPDATE");
+            document.getElementById("update").className = '';
+        }
+        else if (option === "delete"){
+            console.log("DELETE");
+            document.getElementById("delete").className = '';
+        }
+        else {
+            window.location.href = "/error/401";
+        }
+
+        
+     </script>
+
+</html>

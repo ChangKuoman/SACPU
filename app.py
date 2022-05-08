@@ -220,11 +220,23 @@ def admin():
     else:
         return render_template('admin.html')
 
+@app.route("/admin/<action>")
+def admin_action(action):
+    global actual_user
+    if actual_user == '':
+       abort(401)
+    elif actual_user.role != 'admin':
+       abort(401)
+    else:
+       return render_template("admin_action.html", action=str(action))
+
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
 def redirect_errors(error):
     if int(error) == 500:
         abort(500)
+    if int(error) == 401:
+        abort(401)
     else:
         abort(404)
 
