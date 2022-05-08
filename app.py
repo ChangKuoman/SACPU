@@ -95,9 +95,6 @@ def check_password_difficulty(password_to_check):
 # home
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    global actual_user
-    actual_user = ''
-    print("user", actual_user)
     return render_template('index.html')
 
 # login
@@ -210,6 +207,18 @@ def simulator_choose_motherboard():
         pass
     
     return jsonify(response)
+
+# vista admin
+@app.route('/admin', methods=['POST', 'GET'])
+def admin():
+    # TODO: hacer que /simulator tenga un botòn que rediriga aquì (html)
+    global actual_user
+    if actual_user == '':
+        abort(401)
+    elif actual_user.role != 'admin':
+        abort(401)
+    else:
+        return render_template('admin.html')
 
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
