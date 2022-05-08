@@ -106,6 +106,7 @@ def login_enter():
 def register():
     return render_template('register.html')
 
+
 def check_password_difficulty(password_to_check):
     with open("password_lists.txt", "r") as file:
         for password in file:
@@ -124,29 +125,33 @@ def check_password_difficulty(password_to_check):
 
 @app.route('/register/create', methods=['POST', 'GET'])
 def register_create():
-    error = False
+    response = {}
     try:
-        username = request.form.get("username", '')
-        password = request.form.get("password", '')
-        password_check = request.form.get("password_check", '')
-        if password == password_check and check_password_difficulty(password) and len(username) > 0:
+        username = request.get_json()["username"]
+        password = request.get_json()["password"]
+        password_check = request.get_json()["password_check"]
+        response['error'] = False
+        if username in [user.username for user in User.query.all()]:
+            response['invalid_register'] = "Username already exists. Try another one"
+        elif not len(username) >= 4:
+            response['invalid_register'] = "Username must be 4 or more characters"
+        elif password != password_check:
+            response['invalid_register'] = "Passwords do not match"
+        elif not check_password_difficulty(password):
+            response['invalid_register'] = "This is an unsafe password. Password must contain 1 upper, 1 lower, 1 digit, 1 especial character and a minimun length of 6."
+        else:
+            response['invalid_register'] = False
             user = User(username=username, password=password, role="user", dateCreated=func.now())
             db.session.add(user)
             db.session.commit()
-        else:
-            error = True
-            db.session.rollback()
     except Exception as e:
-        error = True
+        response['error'] = True
         print(e)
         db.session.rollback()
     finally:
         db.session.close()
     
-    if error:
-        abort(500)
-    else:
-        return redirect(url_for('login'))
+    return jsonify(response)
 
 @app.route('/simulator', methods=['POST', 'GET'])
 def simulator():
