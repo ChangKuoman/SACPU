@@ -1,6 +1,22 @@
-from app import db, MotherBoard
+from app import db, MotherBoard, User
 from sqlalchemy import func
 
+# default for User role="user", dateCreated=func.now()
+u1 = User(
+    username="HOLI123",
+    password="aA.123",
+)
+
+try:
+    db.session.add(u1)
+    db.session.commit()
+except Exception as e:
+    print(e)
+    db.session.rollback()
+finally:
+    db.session.close()
+
+# default for Motherboard dateCreated=func.now(), dateModified=func.now()
 m1 = MotherBoard(
     id=1,
     price=212.10,

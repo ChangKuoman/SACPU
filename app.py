@@ -31,8 +31,8 @@ class User(db.Model):
     __tablename__ = 'userinfo'
     username = db.Column(db.String(), primary_key=True)
     password = db.Column(db.String(), nullable=False)
-    role = db.Column(db.String(), nullable=False)
-    dateCreated = db.Column(db.DateTime, nullable=False)
+    role = db.Column(db.String(), nullable=False, default="user")
+    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
 
     def __repr__(self):
         return f'user: {self.username}'
@@ -43,8 +43,8 @@ class MotherBoard(db.Model):
     price = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
-    dateCreated = db.Column(db.DateTime, nullable=False)
-    dateModified = db.Column(db.DateTime, nullable=False)
+    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
+    dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
 
     def __repr__(self):
         return f'motherboard: {self.name}'
@@ -56,8 +56,8 @@ class Component(db.Model):
     name = db.Column(db.String(), nullable=False)
     componentType = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
-    dateCreated = db.Column(db.DateTime, nullable=False)
-    dateModified = db.Column(db.DateTime, nullable=False)
+    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
+    dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
 
     def __repr__(self):
         return f'component: {self.name}'
@@ -66,8 +66,8 @@ class Compatible(db.Model):
     __tablename__ = 'compatible'
     id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
     id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
-    dateCreated = db.Column(db.DateTime, nullable=False)
-    dateModified = db.Column(db.DateTime, nullable=False)
+    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
+    dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
 
@@ -150,7 +150,7 @@ def register_create():
             response['invalid_register'] = "This is an unsafe password. Password must contain 1 upper, 1 lower, 1 digit, 1 especial character and a minimun length of 6."
         else:
             response['invalid_register'] = False
-            user = User(username=username, password=password, role="user")
+            user = User(username=username, password=password)
             db.session.add(user)
             db.session.commit()
     except Exception as e:
@@ -188,6 +188,9 @@ def simulator_choose_motherboard():
 
 @app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
 def simulator_motherboard(motherboard):
+    # TODO
+    # realizar lógica para si el motherboard es compatible con los componentes, 
+    # pasar como parametro aquellos que sì son compatibles (parametro 2)
     return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first())
 
 @app.errorhandler(404)
