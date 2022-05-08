@@ -66,7 +66,8 @@ class Compatible(db.Model):
     __tablename__ = 'compatible'
     id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
     id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
-
+    dateCreated = db.Column(db.DateTime, nullable=False)
+    dateModified = db.Column(db.DateTime, nullable=False)
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
 
@@ -149,7 +150,7 @@ def register_create():
             response['invalid_register'] = "This is an unsafe password. Password must contain 1 upper, 1 lower, 1 digit, 1 especial character and a minimun length of 6."
         else:
             response['invalid_register'] = False
-            user = User(username=username, password=password, role="user", dateCreated=func.now())
+            user = User(username=username, password=password, role="user")
             db.session.add(user)
             db.session.commit()
     except Exception as e:
