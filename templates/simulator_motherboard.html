@@ -3,19 +3,26 @@
         <title>
             SACPU - Simulador de Armado de CPU
         </title>
-        <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
-        <link rel="stylesheet" href="static/css/style.css">
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style.css">
     </head>
 
     <body class="fondo">
         <header class="header">
-            <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
             <h1>
                 AHORA, SELECCIONE LOS COMPONENTES
             </h1>
         </header>
         <div>
             {{motherboard.name}}
+        </div>
+        <div>
+            {% for component in components%}
+                <p>
+                    {{component.name}}
+                </p>
+            {% endfor %}
         </div>
     </body>
 </html>

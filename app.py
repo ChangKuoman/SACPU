@@ -41,7 +41,7 @@ class MotherBoard(db.Model):
     __tablename__ = 'motherboard'
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
     dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
@@ -53,7 +53,7 @@ class Component(db.Model):
     __tablename__ = 'component'
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     componentType = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
@@ -74,48 +74,7 @@ class Compatible(db.Model):
 # global variables
 actual_user = ''
 
-# controllers
-@app.route('/', methods=['POST', 'GET'])
-def index():
-    global actual_user
-    actual_user = ''
-    print("user", actual_user)
-    return render_template('index.html')
-
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    return render_template('login.html')
-
-@app.route('/login/enter', methods=['POST', 'GET'])
-def login_enter():
-    response = {}
-    try:
-        username = request.get_json()['username']
-        password = request.get_json()['password']
-        user = User.query.filter_by(username=username).first()
-        response['error'] = False
-        if user == None:
-            response['invalid_login'] = True
-        elif user.password != password:
-            response['invalid_login'] = True
-        else:
-            response['invalid_login'] = False
-            global actual_user
-            actual_user = user.username
-    except Exception as e:
-        response['error'] = True
-        print(e)
-        db.session.rollback()
-    finally:
-        db.session.close()
-
-    return jsonify(response)
-
-@app.route('/register', methods=['POST', 'GET'])
-def register():
-    return render_template('register.html')
-
-
+# functions
 def check_password_difficulty(password_to_check):
     with open("password_lists.txt", "r") as file:
         for password in file:
@@ -131,7 +90,58 @@ def check_password_difficulty(password_to_check):
     else:
         return False
 
+# controllers
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    global actual_user
+    actual_user = ''
+    print("user", actual_user)
+    return render_template('index.html')
 
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    return render_template('login.html')
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    return render_template('register.html')
+
+@app.route('/simulator', methods=['POST', 'GET'])
+def simulator():
+    global actual_user
+    if actual_user != '':
+        return render_template('simulator.html', motherboards=MotherBoard.query.all())
+    else:
+        abort(401)
+
+@app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
+def simulator_motherboard(motherboard):
+    global actual_user
+    error = False
+    try:
+        componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
+        componentList = [componentTuple[0] for componentTuple in componentTuples]
+    except Exception as e:
+        error = True
+        print(e)
+    finally:
+        pass
+    
+    if actual_user == '':
+        abort(401)
+    if error:
+        abort(400)
+    else:
+        return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(), components=componentList)
+
+@app.route('/errors/<error>', methods=['POST', 'GET'])
+def redirect_errors(error):
+    if int(error) == 500:
+        abort(500)
+    else:
+        abort(404)
+
+# jsonResponse
 @app.route('/register/create', methods=['POST', 'GET'])
 def register_create():
     response = {}
@@ -162,13 +172,30 @@ def register_create():
     
     return jsonify(response)
 
-@app.route('/simulator', methods=['POST', 'GET'])
-def simulator():
-    global actual_user
-    if actual_user != '':
-        return render_template('simulator.html', motherboards=MotherBoard.query.all())
-    else:
-        abort(401)
+@app.route('/login/enter', methods=['POST', 'GET'])
+def login_enter():
+    response = {}
+    try:
+        username = request.get_json()['username']
+        password = request.get_json()['password']
+        user = User.query.filter_by(username=username).first()
+        response['error'] = False
+        if user == None:
+            response['invalid_login'] = True
+        elif user.password != password:
+            response['invalid_login'] = True
+        else:
+            response['invalid_login'] = False
+            global actual_user
+            actual_user = user
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+
+    return jsonify(response)
 
 @app.route('/simulator/motherboard', methods=['POST', 'GET'])
 def simulator_choose_motherboard():
@@ -186,13 +213,7 @@ def simulator_choose_motherboard():
     
     return jsonify(response)
 
-@app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
-def simulator_motherboard(motherboard):
-    # TODO
-    # realizar lógica para si el motherboard es compatible con los componentes, 
-    # pasar como parametro aquellos que sì son compatibles (parametro 2)
-    return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first())
-
+# error handlers
 @app.errorhandler(404)
 def error_404(error):
     return render_template('404.html'), 404
@@ -200,13 +221,6 @@ def error_404(error):
 @app.errorhandler(500)
 def error_500(error):
     return render_template('500.html'), 500
-
-@app.route('/errors/<error>', methods=['POST', 'GET'])
-def redirect_errors(error):
-    if int(error) == 500:
-        abort(500)
-    else:
-        abort(404)
 
 #run
 if __name__ == '__main__':
