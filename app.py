@@ -13,9 +13,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import func
 
+anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
+chang_static_path = "/home/chang/Escritorio/SACPU/templates/static"
+
+anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
+chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
+
 # configurations
-app = Flask(__name__, static_folder="/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
+app = Flask(__name__, static_folder=chang_static_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -62,7 +68,9 @@ actual_user = ''
 # controllers
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    global actual_user
     actual_user = ''
+    print("user", actual_user)
     return render_template('index.html')
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -71,26 +79,28 @@ def login():
 
 @app.route('/login/enter', methods=['POST', 'GET'])
 def login_enter():
-    error = False
+    response = {}
     try:
-        username = request.form.get('username', '')
-        password = request.form.get('password', '')
+        username = request.get_json()['username']
+        password = request.get_json()['password']
         user = User.query.filter_by(username=username).first()
-        if user.password != password:
-            error = True
+        response['error'] = False
+        if user == None:
+            response['invalid_login'] = True
+        elif user.password != password:
+            response['invalid_login'] = True
+        else:
+            response['invalid_login'] = False
+            global actual_user
+            actual_user = user.username
     except Exception as e:
-        error = True
+        response['error'] = True
         print(e)
         db.session.rollback()
     finally:
         db.session.close()
 
-    if error:
-        abort(500)
-    else:
-        global actual_user
-        actual_user = user.username
-        return redirect(url_for('simulator'))
+    return jsonify(response)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -153,6 +163,13 @@ def error_404(error):
 @app.errorhandler(500)
 def error_500(error):
     return render_template('500.html'), 500
+
+@app.route('/errors/<error>', methods=['POST', 'GET'])
+def redirect_errors(error):
+    if int(error) == 500:
+        abort(500)
+    else:
+        abort(404)
 
 #run
 if __name__ == '__main__':
