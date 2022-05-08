@@ -157,9 +157,29 @@ def register_create():
 def simulator():
     global actual_user
     if actual_user != '':
-        return render_template('simulator.html')
+        return render_template('simulator.html', motherboards=MotherBoard.query.all())
     else:
         abort(401)
+
+@app.route('/simulator/motherboard', methods=['POST', 'GET'])
+def simulator_choose_motherboard():
+    response = {}
+    try:
+        motherboard = request.get_json()["motherboard"]
+        motherboard = int(motherboard.strip('/'))
+        response['error'] = False
+        response['motherboard'] = motherboard
+    except Exception as e:
+        response['error'] = True
+        print(e)
+    finally:
+        pass
+    
+    return jsonify(response)
+
+@app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
+def simulator_motherboard(motherboard):
+    return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first())
 
 @app.errorhandler(404)
 def error_404(error):

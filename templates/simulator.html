@@ -16,12 +16,62 @@
         </header>
         <div class="text-simulator">
             <p>TARJETA MADRE</p>
-            <form action="/simulator" method="POST">
-                <select name="motherboard" id="motherboard">
-                    <option value="MB MSI X570S EDGE MAX WIFI">MB MSI X570S EDGE MAX WIFI</option>
-                    <option value="MOTHERBOARD ASUS PRIME B460M-A R2.0 LGA1200, DDR4, SATA 6GB/S, HDMI, DVI-D, USB 3.2 GEN1">MOTHERBOARD ASUS PRIME B460M-A R2.0 LGA1200, DDR4, SATA 6GB/S, HDMI, DVI-D, USB 3.2 GEN1</option>
-                </select>
+            <form id="form" name="form">
+                <ul class="no_dots">
+                
+                {% for motherboard in motherboards %}
+                    <li>
+                        <input type="radio" id={{motherboard.id}} name="motherboard" value={{motherboard.id}}/>
+                        <label for={{motherboard.id}}>{{motherboard.name}}</label>
+                        <p class="description_list">Description: {{motherboard.description}}</p>
+                    </li>
+                {% endfor %}
+
+                <input type="submit" value="Submit"/>
             </form>
         </div>
     </body>
+
+    <script>
+
+        document.getElementById('form').onsubmit = function(e) {
+            e.preventDefault();
+            var ele = document.getElementsByName('motherboard');
+            console.log(ele);
+            for(i = 0; i < ele.length; i++) {
+                if(ele[i].checked){
+                    fetch('/simulator/motherboard', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            'motherboard': ele[i].value
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(
+                        response => response.json()
+                    ).then(function(jsonResponse){
+
+                        if (jsonResponse['error']){
+                            // when is an error
+                            window.location.href = '/errors/500'
+                        }
+                        else {
+                            // when motherboard is successful
+                            window.location.href = '/simulator/' + String(jsonResponse['motherboard'])
+                        }
+
+                    }).catch(function() {
+                        console.log('error_choose_motherboard')
+                    });
+                    break;
+                }
+            }
+        }
+
+        document.getElementById('form').onchange = function(e){
+           // document.getElementById('error').className = 'hidden';
+        }
+    </script>
+
 </html>
