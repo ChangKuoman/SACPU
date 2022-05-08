@@ -11,11 +11,17 @@ from flask import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy import func
+from sqlalchemy import func, ForeignKey
+
+anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
+chang_static_path = "/home/chang/Escritorio/SACPU/templates/static"
+
+anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
+chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
 
 # configurations
-app = Flask(__name__, static_folder="/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
+app = Flask(__name__, static_folder=chang_static_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -56,13 +62,24 @@ class Component(db.Model):
     def __repr__(self):
         return f'component: {self.name}'
 
+class Compatible(db.Model):
+    __tablename__ = 'compatible'
+    id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
+    id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
+    dateCreated = db.Column(db.DateTime, nullable=False)
+    dateModified = db.Column(db.DateTime, nullable=False)
+    def __repr__(self):
+        return f'compatible: {self.id_motherboard}-{self.id_component}'
+
 # global variables
 actual_user = ''
 
 # controllers
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    global actual_user
     actual_user = ''
+    print("user", actual_user)
     return render_template('index.html')
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -71,30 +88,33 @@ def login():
 
 @app.route('/login/enter', methods=['POST', 'GET'])
 def login_enter():
-    error = False
+    response = {}
     try:
-        username = request.form.get('username', '')
-        password = request.form.get('password', '')
+        username = request.get_json()['username']
+        password = request.get_json()['password']
         user = User.query.filter_by(username=username).first()
-        if user.password != password:
-            error = True
+        response['error'] = False
+        if user == None:
+            response['invalid_login'] = True
+        elif user.password != password:
+            response['invalid_login'] = True
+        else:
+            response['invalid_login'] = False
+            global actual_user
+            actual_user = user.username
     except Exception as e:
-        error = True
+        response['error'] = True
         print(e)
         db.session.rollback()
     finally:
         db.session.close()
 
-    if error:
-        abort(500)
-    else:
-        global actual_user
-        actual_user = user.username
-        return redirect(url_for('simulator'))
+    return jsonify(response)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     return render_template('register.html')
+
 
 def check_password_difficulty(password_to_check):
     with open("password_lists.txt", "r") as file:
@@ -114,37 +134,61 @@ def check_password_difficulty(password_to_check):
 
 @app.route('/register/create', methods=['POST', 'GET'])
 def register_create():
-    error = False
+    response = {}
     try:
-        username = request.form.get("username", '')
-        password = request.form.get("password", '')
-        password_check = request.form.get("password_check", '')
-        if password == password_check and check_password_difficulty(password) and len(username) > 0:
-            user = User(username=username, password=password, role="user", dateCreated=func.now())
+        username = request.get_json()["username"]
+        password = request.get_json()["password"]
+        password_check = request.get_json()["password_check"]
+        response['error'] = False
+        if username in [user.username for user in User.query.all()]:
+            response['invalid_register'] = "Username already exists. Try another one"
+        elif not len(username) >= 4:
+            response['invalid_register'] = "Username must be 4 or more characters"
+        elif password != password_check:
+            response['invalid_register'] = "Passwords do not match"
+        elif not check_password_difficulty(password):
+            response['invalid_register'] = "This is an unsafe password. Password must contain 1 upper, 1 lower, 1 digit, 1 especial character and a minimun length of 6."
+        else:
+            response['invalid_register'] = False
+            user = User(username=username, password=password, role="user")
             db.session.add(user)
             db.session.commit()
-        else:
-            error = True
-            db.session.rollback()
     except Exception as e:
-        error = True
+        response['error'] = True
         print(e)
         db.session.rollback()
     finally:
         db.session.close()
     
-    if error:
-        abort(500)
-    else:
-        return redirect(url_for('login'))
+    return jsonify(response)
 
 @app.route('/simulator', methods=['POST', 'GET'])
 def simulator():
     global actual_user
     if actual_user != '':
-        return render_template('simulator.html')
+        return render_template('simulator.html', motherboards=MotherBoard.query.all())
     else:
         abort(401)
+
+@app.route('/simulator/motherboard', methods=['POST', 'GET'])
+def simulator_choose_motherboard():
+    response = {}
+    try:
+        motherboard = request.get_json()["motherboard"]
+        motherboard = int(motherboard.strip('/'))
+        response['error'] = False
+        response['motherboard'] = motherboard
+    except Exception as e:
+        response['error'] = True
+        print(e)
+    finally:
+        pass
+    
+    return jsonify(response)
+
+@app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
+def simulator_motherboard(motherboard):
+    return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first())
 
 @app.errorhandler(404)
 def error_404(error):
@@ -153,6 +197,13 @@ def error_404(error):
 @app.errorhandler(500)
 def error_500(error):
     return render_template('500.html'), 500
+
+@app.route('/errors/<error>', methods=['POST', 'GET'])
+def redirect_errors(error):
+    if int(error) == 500:
+        abort(500)
+    else:
+        abort(404)
 
 #run
 if __name__ == '__main__':

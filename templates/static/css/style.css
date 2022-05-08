@@ -118,3 +118,20 @@ html{
 .image_div{
     margin: 20px;
 }
+
+.hidden{
+    display: none;
+}
+
+.error_text{
+    color: red;
+    font-size: 14px;
+}
+
+.no_dots{
+    list-style-type: none;
+}
+
+.description_list{
+    font-size: 14px;
+}
