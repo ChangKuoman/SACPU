@@ -41,7 +41,7 @@ class MotherBoard(db.Model):
     __tablename__ = 'motherboard'
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
     dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
@@ -53,7 +53,7 @@ class Component(db.Model):
     __tablename__ = 'component'
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     componentType = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
@@ -188,10 +188,9 @@ def simulator_choose_motherboard():
 
 @app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
 def simulator_motherboard(motherboard):
-    # TODO
-    # realizar lógica para si el motherboard es compatible con los componentes, 
-    # pasar como parametro aquellos que sì son compatibles (parametro 2)
-    return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first())
+    componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
+    componentList = [componentTuple[0] for componentTuple in componentTuples]
+    return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(), components=componentList)
 
 @app.errorhandler(404)
 def error_404(error):
