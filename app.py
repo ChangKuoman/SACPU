@@ -403,8 +403,6 @@ def delete_compatible():
         print(id_motherboard, "-", id_component)
 
         response['error'] = False
-        # necesario primero eliminar dependecias SI existen
-
         query = Compatible.query.filter(Compatible.id_motherboard==id_motherboard).filter(Compatible.id_component==id_component)
         print(query.all())
 
@@ -415,7 +413,6 @@ def delete_compatible():
             response['child_id'] = f"mc-{id_motherboard}-{id_component}"
             query.delete()
             db.session.commit()
-
 
     except Exception as e:
         response['error'] = True
