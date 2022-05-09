@@ -303,12 +303,10 @@ def create_compatible():
     try:
         id_motherboard = request.get_json()["id_motherboard"]
         id_component = request.get_json()["id_component"]
-        print(id_motherboard, id_component)
-
 
         response['error'] = False
         query = Compatible.query.filter(Compatible.id_component==id_component).filter(Compatible.id_motherboard==id_motherboard).all()
-        print(query)
+
         if query != []:
             response['invalid_register'] = "The compatible choosen already exists"
         else:
