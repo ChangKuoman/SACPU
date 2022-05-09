@@ -179,6 +179,12 @@ def simulator_motherboard(motherboard):
     try:
         componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
         componentList = [componentTuple[0] for componentTuple in componentTuples]
+
+        # TODO: separar los componentes por tipo (para imprimir por tipo en el simulator_motherboard.html) y los que no son ponerlos por tipo,
+        # pero qwue no son necesarios que tengan compatibilidad. Asimismo con los periféricos, pero puedas elegri varios tipos de periféricos
+        # con checkbox
+        # poner precio en c/u al imprimir al lado: Name:{{component.name}}-Price{{componente.price}}
+
     except Exception as e:
         error = True
         print(e)
