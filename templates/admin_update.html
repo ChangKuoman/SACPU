@@ -1,0 +1,147 @@
+<html>
+    <head>
+        <title>
+            SACPU - Admin
+        </title>
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+
+    <body>
+        <div id="error" class="hidden">
+            <p class="error_text" id="error_text">
+
+            </p>
+        </div>
+
+        <p>UPDATE CANNOT BE MADE TO ID, IF YOU DONT PUT ANYTHING, IT WILL NOT BE UPDATED</p>
+
+        <div class="boton_div">
+            <a href="/admin" target="_self">
+                ADMIN
+            </a>
+        </div>
+
+        <div id="error" class="hidden">
+            <p class="error_text" id="error_text">
+
+            </p>
+        </div>
+
+        <div>
+            <h2>UPDATE MOTHERBOARD</h2>
+
+            <form id="form_motherboard">
+                <select name="motherboard" id="motherboard_id">
+                    {% for motherboard in motherboards %}
+                    <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <p>NAME</p>
+                <input type="text" id="motherboard_name" placeholder="name"/>
+
+                <p>PRICE</p>
+                <input type="number" id="motherboard_price" step="0.01" placeholder="price"/>
+
+                <p>DESCRIPTION</p>
+                <input type="text" id="motherboard_description" placeholder="description"/>
+
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+        <div>
+            <h2>UPDATE COMPONENT</h2>
+
+            <form id="form_component">
+                <select name="component" id="id_component">
+                    {% for component in components %}
+                    <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <p>NAME</p>
+                <input type="text" id="component_name" placeholder="name"/>
+
+                <p>PRICE</p>
+                <input type="number" id="component_price" step="0.01" placeholder="price"/>
+
+                <p>DESCRIPTION</p>
+                <input type="text" id="component_description" placeholder="description"/>
+
+                <p>COMPONENT TYPE</p>
+                <input type="text" id="component_type" placeholder="component type"/>
+                
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+    </body>
+
+    <script>
+        // function for form_motherboard form
+        console.log("AFUERA");
+        document.getElementById('form_motherboard').onsubmit = function(e) {
+            console.log("AQUI");
+            e.preventDefault();
+            const motherboard_id = document.getElementById('motherboard_id').value;
+
+            const motherboard_name = document.getElementById('motherboard_name').value;
+            const motherboard_price = document.getElementById('motherboard_price').value;
+            const motherboard_description = document.getElementById('motherboard_description').value;
+
+            fetch('/admin/update/motherboard', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'motherboard_id': motherboard_id,
+                    'motherboard_name': motherboard_name,
+                    'motherboard_price': motherboard_price,
+                    'motherboard_description': motherboard_description
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                response => response.json()
+            ).then(function(jsonResponse){
+                console.log(jsonResponse);
+                
+                if (jsonResponse['error']){
+                    // when is an error
+                    window.location.href = '/errors/500';
+                }
+                else if (! jsonResponse['invalid_register']){
+                    // when deleted is successful
+                    alert("MOTHERBOARD UPDATED SUCCESSFULLY");
+                    document.getElementById('form_motherboard').reset();
+
+                    // update name from motherboard form IF changed
+                    console.log(jsonResponse['child_name'] !== undefined);
+                    console.log(jsonResponse['child_name']);
+                    if (jsonResponse['child_name'] !== undefined){
+                        console.log(jsonResponse['child_id']);
+                        console.log(document.getElementById(jsonResponse['child_id']));
+                        console.log(document.getElementById(jsonResponse['child_id']).innerHTML);
+
+                        document.getElementById(jsonResponse['child_id']).innerHTML = String(jsonResponse['child_name']);
+                    }
+                
+                }
+                else {
+                    // when deleted is NOT successful
+                    document.getElementById('error_text').textContent = String(jsonResponse['invalid_register']);
+                    document.getElementById('error').className = '';
+                }
+                
+            }).catch(function() {
+                console.log('error_register')
+            });
+        }
+        // function for on change error
+        document.getElementById('form_motherboard').onchange = function(e){
+        //    document.getElementById('error').className = 'hidden';
+        }
+
+    </script>
+</html>

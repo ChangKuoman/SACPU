@@ -231,7 +231,7 @@ def admin_action(action):
         print(Component.query.all())
         return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     elif action == "update":
-        return render_template("admin_update.html")
+        return render_template("admin_update.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     elif action == "delete":
         componentTuples= db.session.query(Compatible, MotherBoard, Component).filter(Compatible.id_motherboard==MotherBoard.id).filter(Compatible.id_component==Component.id).all()
         for i in componentTuples:
@@ -336,7 +336,6 @@ def create_compatible():
     return jsonify(response)
 
 # delete routes
-
 @app.route("/admin/delete/motherboard", methods=['POST', 'GET'])
 def delete_motherboard():
     response = {}
@@ -422,6 +421,61 @@ def delete_compatible():
             response['child_id'] = f"mc-{id_motherboard}-{id_component}"
             query.delete()
             db.session.commit()
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+# update routes
+@app.route("/admin/update/motherboard", methods=['POST', 'GET'])
+def update_motherboard():
+    print("AQUI")
+    response = {}
+    try:
+        motherboard_id = request.get_json()["motherboard_id"]
+
+        motherboard_name = request.get_json()["motherboard_name"]
+        motherboard_price = request.get_json()["motherboard_price"]
+        motherboard_description = request.get_json()["motherboard_description"]
+
+        response['error'] = False
+        query = MotherBoard.query.filter(MotherBoard.id==motherboard_id)
+
+        if query == []:
+            response['invalid_register'] = "There is motherboard in database"
+        else:
+            query = query.first()
+            response['invalid_register'] = False
+
+            if motherboard_name != '':
+                if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+                    response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+                else:
+                    query.name = motherboard_name
+                    response['child_id'] = f"m-{motherboard_id}"
+                    response['child_name'] = motherboard_name
+                    
+            if motherboard_price != '':
+                if float(motherboard_price) <= 0:
+                    response['invalid_register'] = "Motherboard price cannot be negative or zero"
+                else:
+                    query.price = motherboard_price
+            if motherboard_description != '':
+                query.description = motherboard_description
+
+            if response['invalid_register']:
+                # actualizacion no se hace
+                print("actualizacion NO hecha")
+                db.session.rollback()
+            else:
+                # actualizacion se hace
+                query.dateModified = func.now()
+                db.session.commit()
 
     except Exception as e:
         response['error'] = True
