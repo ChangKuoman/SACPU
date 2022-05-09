@@ -234,9 +234,10 @@ def admin_action(action):
         return render_template("admin_update.html")
     elif action == "delete":
         # TODO: pasar lista a render template y usarla para hacer removeChild . falta implementarlo y hacer el join correctamente
-        componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
-
-        return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
+        componentTuples= db.session.query(Compatible, MotherBoard, Component).filter(Compatible.id_motherboard==MotherBoard.id).filter(Compatible.id_component==Component.id).all()
+        for i in componentTuples:
+            print(i)
+        return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all(), compatibles=componentTuples)
     else:
         abort(404)
 

@@ -50,7 +50,9 @@
                 <select name="compatible" id="id_compatible">
                     <!--TODO: app.py 236-->
                     {% for compatible in compatibles %}
-                    <option value={{component.id}} id="c-{{component.id}}">{{compatible.id}} {{compatible.}}</option>
+                    <option value="{{compatible[1].id}} {{compatible[2].id}}" id="mc-{{compatible[1].id}}-{{compatible[2].id}}" class="m-{{compatible[1].id}} c-{{compatible[2].id}}">
+                        Motherboard: {{compatible[1].name}} - Componente: {{compatible[2].name}}
+                    </option>
                     {% endfor %}
                 </select>
 
@@ -84,11 +86,23 @@
                 }
                 else if (! jsonResponse['invalid_register']){
                     // when deleted is successful
+
+                    // alerts everything went ok
                     alert("MOTHERBOARD DELETED SUCCESSFULLY");
+                    // resets
                     document.getElementById('form_motherboard').reset();
+
+                    // eliminate from motherboard form
                     console.log(document.getElementById('id_motherboard').hasChildNodes());
                     console.log(document.getElementById(jsonResponse['child_id']));
                     document.getElementById('id_motherboard').removeChild(document.getElementById(jsonResponse['child_id']));
+
+                    // eliminate from compatible form
+                    const elements = document.getElementsByClassName(jsonResponse['child_id']);
+                    while(elements.length > 0){
+                        elements[0].parentNode.removeChild(elements[0]);
+                    }
+                
                 }
                 else {
                     // when deleted is NOT successful
