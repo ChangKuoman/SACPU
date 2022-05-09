@@ -233,6 +233,9 @@ def admin_action(action):
     elif action == "update":
         return render_template("admin_update.html")
     elif action == "delete":
+        # TODO: pasar lista a render template y usarla para hacer removeChild . falta implementarlo y hacer el join correctamente
+        componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
+
         return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     else:
         abort(404)
@@ -343,6 +346,7 @@ def delete_motherboard():
             response['invalid_register'] = "There is no motherboard in database"
         else:
             response['invalid_register'] = False
+            response['child_id'] = f"m-{id_motherboard}"
             query2.delete()
             db.session.commit()
     except Exception as e:

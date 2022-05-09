@@ -22,7 +22,7 @@
             <form id="form_motherboard">
                 <select name="motherboard" id="id_motherboard">
                     {% for motherboard in motherboards %}
-                    <option value={{motherboard.id}}>{{motherboard.name}}</option>
+                    <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
                     {% endfor %}
                 </select>
                 <input type="submit" value="Submit"/>
@@ -35,7 +35,7 @@
             <form id="form_component">
                 <select name="component" id="id_component">
                     {% for component in components %}
-                    <option value={{component.id}}>{{component.name}}</option>
+                    <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
                     {% endfor %}
                 </select>
                 <input type="submit" value="Submit"/>
@@ -46,6 +46,13 @@
             <h2>DELETE COMPATIBLE</h2>
             
             <form id="form_compatible">
+
+                <select name="compatible" id="id_compatible">
+                    <!--TODO: app.py 236-->
+                    {% for compatible in compatibles %}
+                    <option value={{component.id}} id="c-{{component.id}}">{{compatible.id}} {{compatible.}}</option>
+                    {% endfor %}
+                </select>
 
                 <input type="submit" value="Submit"/>
             </form>
@@ -79,6 +86,9 @@
                     // when deleted is successful
                     alert("MOTHERBOARD DELETED SUCCESSFULLY");
                     document.getElementById('form_motherboard').reset();
+                    console.log(document.getElementById('id_motherboard').hasChildNodes());
+                    console.log(document.getElementById(jsonResponse['child_id']));
+                    document.getElementById('id_motherboard').removeChild(document.getElementById(jsonResponse['child_id']));
                 }
                 else {
                     // when deleted is NOT successful
