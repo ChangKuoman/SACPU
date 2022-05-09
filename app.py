@@ -20,8 +20,8 @@ anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
 
 # configurations
-app = Flask(__name__, static_folder=chang_static_path)
-app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
+app = Flask(__name__, static_folder=anderson_static_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = anderson_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

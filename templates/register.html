@@ -4,12 +4,13 @@
             SACPU - Registrarse
         </title>
         <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
-        <link rel="stylesheet" href="static/css/style.css">
+        <link rel="stylesheet" href="static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
     </head>
     
     <body class="fondo">
         <header class="header">
-            <a href="/" target="_self">
+            <a class="a_icono" href="/" target="_self">
                 <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
             </a>
             <a href="/" target="_self" class="home_button">
@@ -18,22 +19,21 @@
                 </h1>
             </a>
         </header>
-
-        <div class="center_all">
+        <div class="contenedor">
             <form id="form" class="form_div">
-                <p>USERNAME</p>
+                <p class="subtitulos">USERNAME</p>
                 <input type="text" id="username" name="username"/>
                 <p>PASSWORD</p>
                 <input type="password" id="password" name="password"/>
                 <p>ENTER PASSWORD AGAIN</p>
                 <input type="password" id="password_check" name="password_check"/>
-                <input type="submit" value="Create"/>
+                <input class="boton_submit" type="submit" value="Create"/>
             </form>
-        </div>
-        <div id="error" class="hidden">
-            <p class="error_text" id="error_text">
-                
-            </p>
+            <div id="error" class="hidden">
+                <p class="error_text" id="error_text">
+                    
+                </p>
+            </div>
         </div>
     </body>
     <!--script must be here-->
