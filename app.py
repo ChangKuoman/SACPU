@@ -266,6 +266,37 @@ def create_motherboard():
     
     return jsonify(response)
 
+@app.route("/admin/create/component", methods=['POST', 'GET'])
+def create_component():
+    response = {}
+    try:
+        component_name = request.get_json()["component_name"]
+        component_description = request.get_json()["component_description"]
+        component_type = request.get_json()["component_type"]
+        component_price = request.get_json()["component_price"]
+        response['error'] = False
+        if component_name in [component.name for component in Component.query.all()]:
+            response['invalid_register'] = "Component with same name found in database. Try another name"
+        elif float(component_price) <= 0:
+            response['invalid_register'] = "Component price cannot be negative or zero"
+        elif component_description == '':
+            response['invalid_register'] = "Description cannot be empty"
+        elif component_type not in ['RAM', 'CPU', 'GPU', 'Procesador']:
+            response['invalid_register'] = "Component type is not valid"
+        else:
+            response['invalid_register'] = False
+            component = Component(name=component_name, description=component_description, price=component_price, componentType=component_type)
+            db.session.add(component)
+            db.session.commit()
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
 def redirect_errors(error):
