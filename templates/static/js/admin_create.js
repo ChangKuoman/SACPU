@@ -24,9 +24,16 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
             window.location.href = '/errors/500';
         }
         else if (! jsonResponse['invalid_register']){
-            // when register is successful
+            // when register IS successful
             alert("MOTHERBOARD ADDED SUCCESSFULLY");
             document.getElementById('form_motherboard').reset();
+
+            // create option and fill
+            let option = document.createElement('option');
+            option.setAttribute('value', jsonResponse['child_id']);
+            option.innerHTML = jsonResponse['child_name'];
+            // append child to options in motherboard in compatible form
+            document.getElementById('id_motherboard').appendChild(option);
         }
         else {
             // when register is NOT successful
@@ -74,6 +81,13 @@ document.getElementById('form_component').onsubmit = function(e) {
             // when register is successful
             alert("COMPONENT ADDED SUCCESSFULLY");
             document.getElementById('form_component').reset();
+
+            // create option and fill
+            let option = document.createElement('option');
+            option.setAttribute('value', jsonResponse['child_id']);
+            option.innerHTML = jsonResponse['child_name'];
+            // append child to options in motherboard in compatible form
+            document.getElementById('id_component').appendChild(option);
         }
         else {
             // when register is NOT successful

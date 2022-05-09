@@ -260,6 +260,11 @@ def create_motherboard():
             motherboard = MotherBoard(name=motherboard_name, description=motherboard_description, price=motherboard_price)
             db.session.add(motherboard)
             db.session.commit()
+
+            response['child_name'] = motherboard_name
+            response['child_id'] = motherboard.id
+            print(motherboard.id)
+            
     except Exception as e:
         response['error'] = True
         print(e)
@@ -291,6 +296,10 @@ def create_component():
             component = Component(name=component_name, description=component_description, price=component_price, componentType=component_type)
             db.session.add(component)
             db.session.commit()
+
+            response['child_name'] = component_name
+            response['child_id'] = component.id
+            print(component.id)
     except Exception as e:
         response['error'] = True
         print(e)
