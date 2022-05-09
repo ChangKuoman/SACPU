@@ -224,11 +224,47 @@ def admin():
 def admin_action(action):
     global actual_user
     if actual_user == '':
-       abort(401)
+        abort(401)
     elif actual_user.role != 'admin':
-       abort(401)
+        abort(401)
+    elif action == "create":
+        print(Component.query.all())
+        return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
+    elif action == "update":
+        return render_template("admin_update.html")
+    elif action == "delete":
+        return render_template("admin_delete.html")
     else:
-       return render_template("admin_action.html", action=str(action))
+        abort(404)
+
+# create routes
+@app.route("/admin/create/motherboard", methods=['POST', 'GET'])
+def create_motherboard():
+    response = {}
+    try:
+        motherboard_name = request.get_json()["motherboard_name"]
+        motherboard_description = request.get_json()["motherboard_description"]
+        motherboard_price = request.get_json()["motherboard_price"]
+        response['error'] = False
+        if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+            response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+        elif float(motherboard_price) <= 0:
+            response['invalid_register'] = "Motherboard price cannot be negative or zero"
+        elif motherboard_description == '':
+            response['invalid_register'] = "Description cannot be empty"
+        else:
+            response['invalid_register'] = False
+            motherboard = MotherBoard(name=motherboard_name, description=motherboard_description, price=motherboard_price)
+            db.session.add(motherboard)
+            db.session.commit()
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
 
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
