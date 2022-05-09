@@ -233,7 +233,6 @@ def admin_action(action):
     elif action == "update":
         return render_template("admin_update.html")
     elif action == "delete":
-        # TODO: pasar lista a render template y usarla para hacer removeChild . falta implementarlo y hacer el join correctamente
         componentTuples= db.session.query(Compatible, MotherBoard, Component).filter(Compatible.id_motherboard==MotherBoard.id).filter(Compatible.id_component==Component.id).all()
         for i in componentTuples:
             print(i)
@@ -336,10 +335,11 @@ def delete_motherboard():
         id_motherboard = request.get_json()["id_motherboard"]
 
         response['error'] = False
+        # necesario primero eliminar dependecias SI existen
         query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
         query1.delete()
         db.session.commit()
-
+        
         query2 = MotherBoard.query.filter_by(id=id_motherboard)
         print(query2.all())
 
@@ -350,6 +350,73 @@ def delete_motherboard():
             response['child_id'] = f"m-{id_motherboard}"
             query2.delete()
             db.session.commit()
+
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/delete/component", methods=['POST', 'GET'])
+def delete_component():
+    response = {}
+    try:
+        id_component = request.get_json()["id_component"]
+
+        response['error'] = False
+        # necesario primero eliminar dependecias SI existen
+        query1 = Compatible.query.filter_by(id_component=id_component)
+        query1.delete()
+        db.session.commit()
+
+        query2 = Component.query.filter_by(id=id_component)
+        print(query2.all())
+
+        if query2.all() == []:
+            response['invalid_register'] = "There is no component in database"
+        else:
+            response['invalid_register'] = False
+            response['child_id'] = f"c-{id_component}"
+            query2.delete()
+            db.session.commit()
+
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/delete/compatible", methods=['POST', 'GET'])
+def delete_compatible():
+    response = {}
+    try:
+        id_compatible = request.get_json()["id_compatible"]
+        id_motherboard, id_component = id_compatible.split()
+        print(id_motherboard, "-", id_component)
+
+        response['error'] = False
+        # necesario primero eliminar dependecias SI existen
+
+        query = Compatible.query.filter(Compatible.id_motherboard==id_motherboard).filter(Compatible.id_component==id_component)
+        print(query.all())
+
+        if query.all() == []:
+            response['invalid_register'] = "There is no compatible in database"
+        else:
+            response['invalid_register'] = False
+            response['child_id'] = f"mc-{id_motherboard}-{id_component}"
+            query.delete()
+            db.session.commit()
+
+
     except Exception as e:
         response['error'] = True
         print(e)
