@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>
+            SACPU - Admin
+        </title>
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+
+    <body>
+        <p>WHEN DELETING A MOTHERBOARD OR COMPONENT IT ALSO DELETES THE COMPATIBLE RELATED</p>
+
+        <div id="error" class="hidden">
+            <p class="error_text" id="error_text">
+
+            </p>
+        </div>
+
+        <div>
+            <h2>DELETE MOTHERBOARD</h2>
+
+            <form id="form_motherboard">
+                <select name="motherboard" id="id_motherboard">
+                    {% for motherboard in motherboards %}
+                    <option value={{motherboard.id}}>{{motherboard.name}}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+        <div>
+            <h2>DELETE COMPONENT</h2>
+
+            <form id="form_component">
+                <select name="component" id="id_component">
+                    {% for component in components %}
+                    <option value={{component.id}}>{{component.name}}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+        <div>
+            <h2>DELETE COMPATIBLE</h2>
+            
+            <form id="form_compatible">
+
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+    </body>
+
+    <script>
+        // function for form_motherboard form
+        document.getElementById('form_motherboard').onsubmit = function(e) {
+            e.preventDefault();
+            const id_motherboard = document.getElementById('id_motherboard').value;
+            fetch('/admin/delete/motherboard', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'id_motherboard': id_motherboard
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                response => response.json()
+            ).then(function(jsonResponse){
+                console.log(jsonResponse);
+                
+                if (jsonResponse['error']){
+                    // when is an error
+                    window.location.href = '/errors/500';
+                }
+                else if (! jsonResponse['invalid_register']){
+                    // when deleted is successful
+                    alert("MOTHERBOARD DELETED SUCCESSFULLY");
+                    document.getElementById('form_motherboard').reset();
+                }
+                else {
+                    // when deleted is NOT successful
+                    document.getElementById('error_text').textContent = String(jsonResponse['invalid_register']);
+                    document.getElementById('error').className = '';
+                }
+                
+            }).catch(function() {
+                console.log('error_register')
+            });
+        }
+        // function for on change error
+        document.getElementById('form_motherboard').onchange = function(e){
+            document.getElementById('error').className = 'hidden';
+        }
+
+    </script>
+</html>

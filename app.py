@@ -233,7 +233,7 @@ def admin_action(action):
     elif action == "update":
         return render_template("admin_update.html")
     elif action == "delete":
-        return render_template("admin_delete.html")
+        return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     else:
         abort(404)
 
@@ -313,6 +313,37 @@ def create_compatible():
             response['invalid_register'] = False
             compatible = Compatible(id_component=id_component, id_motherboard=id_motherboard)
             db.session.add(compatible)
+            db.session.commit()
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+# delete routes
+
+@app.route("/admin/delete/motherboard", methods=['POST', 'GET'])
+def delete_motherboard():
+    response = {}
+    try:
+        id_motherboard = request.get_json()["id_motherboard"]
+
+        response['error'] = False
+        query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
+        query1.delete()
+        db.session.commit()
+
+        query2 = MotherBoard.query.filter_by(id=id_motherboard)
+        print(query2.all())
+
+        if query2.all() == []:
+            response['invalid_register'] = "There is no motherboard in database"
+        else:
+            response['invalid_register'] = False
+            query2.delete()
             db.session.commit()
     except Exception as e:
         response['error'] = True
