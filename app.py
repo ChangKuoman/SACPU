@@ -297,6 +297,34 @@ def create_component():
     
     return jsonify(response)
 
+@app.route("/admin/create/compatible", methods=['POST', 'GET'])
+def create_compatible():
+    response = {}
+    try:
+        id_motherboard = request.get_json()["id_motherboard"]
+        id_component = request.get_json()["id_component"]
+        print(id_motherboard, id_component)
+
+
+        response['error'] = False
+        query = Compatible.query.filter(Compatible.id_component==id_component).filter(Compatible.id_motherboard==id_motherboard).all()
+        print(query)
+        if query != []:
+            response['invalid_register'] = "The compatible choosen already exists"
+        else:
+            response['invalid_register'] = False
+            compatible = Compatible(id_component=id_component, id_motherboard=id_motherboard)
+            db.session.add(compatible)
+            db.session.commit()
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
 def redirect_errors(error):
