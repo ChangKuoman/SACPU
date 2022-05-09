@@ -486,6 +486,65 @@ def update_motherboard():
     
     return jsonify(response)
 
+@app.route("/admin/update/component", methods=['POST', 'GET'])
+def update_component():
+    response = {}
+    try:
+        component_id = request.get_json()["component_id"]
+
+        component_name = request.get_json()["component_name"]
+        component_price = request.get_json()["component_price"]
+        component_description = request.get_json()["component_description"]
+        component_type = request.get_json()["component_type"]
+
+        response['error'] = False
+        query = Component.query.filter(Component.id==component_id)
+
+        if query == []:
+            response['invalid_register'] = "There is component in database"
+        else:
+            query = query.first()
+            response['invalid_register'] = False
+
+            if component_name != '':
+                if component_name in [component.name for component in Component.query.all()]:
+                    response['invalid_register'] = "Component with same name found in database. Try another name"
+                else:
+                    query.name = component_name
+                    response['child_id'] = f"c-{component_id}"
+                    response['child_name'] = component_name
+                    
+            if component_price != '':
+                if float(component_price) <= 0:
+                    response['invalid_register'] = "Component price cannot be negative or zero"
+                else:
+                    query.price = component_price
+            if component_description != '':
+                query.description = component_description
+            if component_type != '':
+                if component_type not in ['RAM', 'GPU', 'CPU']:
+                    response['invalid_register'] = "Component type is not valid"
+                else:
+                    query.componentType = component_type
+
+            if response['invalid_register']:
+                # actualizacion no se hace
+                print("actualizacion NO hecha")
+                db.session.rollback()
+            else:
+                # actualizacion se hace
+                query.dateModified = func.now()
+                db.session.commit()
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
 def redirect_errors(error):
