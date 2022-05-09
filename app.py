@@ -289,7 +289,7 @@ def create_component():
             response['invalid_register'] = "Component price cannot be negative or zero"
         elif component_description == '':
             response['invalid_register'] = "Description cannot be empty"
-        elif component_type not in ['RAM', 'CPU', 'GPU', 'Procesador']:
+        elif component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
             response['invalid_register'] = "Component type is not valid"
         else:
             response['invalid_register'] = False
@@ -522,7 +522,7 @@ def update_component():
             if component_description != '':
                 query.description = component_description
             if component_type != '':
-                if component_type not in ['RAM', 'GPU', 'CPU']:
+                if component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
                     response['invalid_register'] = "Component type is not valid"
                 else:
                     query.componentType = component_type

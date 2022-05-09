@@ -43,7 +43,16 @@
                 <P>Descripción del Componente</P>
                 <input type="text" id="component_description"/>
                 <P>Tipo de Componente</P>
-                <input type="text" id="component_type"/>
+                <select id="component_type">
+                    <option value="RAM">RAM (Random Access Memory)</option>
+                    <option value="SSD">SSD (Solid State Drive)</option>
+                    <option value="HDD">HDD (Hard Drive Disk)</option>
+                    <option value="CPU">CPU (Central Processing Unit)</option>
+                    <option value="GPU">GPU (Graphics Processing Unit)</option>
+                    <option value="PSU">PSU (Power Supply Unit)</option>
+                    <option value="PC Cooling">PC Cooling</option>
+                    <option value="Peripheral">Peripheral</option>
+                </select>
                 <P>Precio</P>
                 <input type="number" id="component_price" step="0.01"/>
                 <input type="submit" value="Submit"/>

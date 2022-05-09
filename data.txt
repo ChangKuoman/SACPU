@@ -1,0 +1,25 @@
+# Parts of the computer
+
+* MotherBoard (tarjeta madre)
+
+* Components (componentes)
+    * RAM (Random Access Memory)
+    * SSD (Solid State Drive)
+    * HDD (Hard Drive Disk)
+    * CPU (Central Processing Unit)
+    * GPU (Graphics Processing Unit)
+    * PSU (Power Supply Unit)
+    * PC Cooling
+
+['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']
+
+**Implemented as components with Peripheral Tag**
+* Periferics (periféricos)
+    * Mouse
+    * Headphones
+    * KeyBoard
+    * Webcam
+    * Microphone
+    * Monitor
+    * Speakers
+
