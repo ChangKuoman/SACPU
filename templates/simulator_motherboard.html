@@ -154,8 +154,8 @@
             <ul class="no_dots" id="shopping_items">
 
             </ul>
-            <p>TOTAL: </p>
-            <p id="total_price">0</p>
+            <p>TOTAL: S/.</p>
+            <p id="total_price">0.00</p>
         </div>
 
         <!--['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']-->
@@ -178,7 +178,7 @@
                     document.getElementById('shopping_items').appendChild(li);
                     // anadir de precio
                     total_price =  document.getElementById('total_price').innerHTML;
-                    total_price = parseFloat(total_price) + parseFloat(price);
+                    total_price = (parseFloat(total_price) + parseFloat(price)).toFixed(2);
                     document.getElementById('total_price').innerHTML = total_price;
                 }
                 else if (change === false){
@@ -187,7 +187,7 @@
                     document.getElementById('shopping_items').removeChild(elem[0]);
                     // quitar de precio
                     total_price =  document.getElementById('total_price').innerHTML;
-                    total_price = parseFloat(total_price) - parseFloat(price);
+                    total_price = (parseFloat(total_price) - parseFloat(price)).toFixed(2);
                     document.getElementById('total_price').innerHTML = total_price;
                 }
             }
