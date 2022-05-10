@@ -9,11 +9,17 @@ from app import db, User
 u1 = User(
     username="chang",
     password="aA.123",
+    role="admin"
 )
 
 u2 = User(
     username="bibiepiro",
     password="Bbcita-2004"
+)
+
+u3 = User(
+    username="brigitte",
+    password="Faraon.1"
 )
 
 try:

@@ -177,8 +177,20 @@ def simulator_motherboard(motherboard):
     global actual_user
     error = False
     try:
-        componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
-        componentList = [componentTuple[0] for componentTuple in componentTuples]
+        query = db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard==int(motherboard))
+        # componentes compatibles con el id de la motherboard (RAM, SSD, GPU, PC Cooling)
+        list_RAM = [component[0] for component in query.filter_by(componentType = 'RAM')]
+        print(list_RAM)
+        list_SSD = [component[0] for component in query.filter_by(componentType = 'SSD')]
+        list_GPU = [component[0] for component in query.filter_by(componentType = 'GPU')]
+        list_PC_Cooling = [component[0] for component in query.filter_by(componentType = 'PC Cooling')]
+
+        query2 = db.session.query(Component)
+        # componentes que no requieren compatibilidad
+        list_HDD = query2.filter_by(componentType = 'HDD').all()
+        list_CPU = query2.filter_by(componentType = 'CPU').all()
+        list_PSU = query2.filter_by(componentType = 'PSU').all()
+        list_Peripheral = query2.filter_by(componentType = 'Peripheral').all()
 
         # TODO: separar los componentes por tipo (para imprimir por tipo en el simulator_motherboard.html) y los que no son ponerlos por tipo,
         # pero qwue no son necesarios que tengan compatibilidad. Asimismo con los periféricos, pero puedas elegri varios tipos de periféricos
@@ -196,7 +208,16 @@ def simulator_motherboard(motherboard):
     if error:
         abort(400)
     else:
-        return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(), components=componentList)
+        return render_template('simulator_motherboard.html',
+            motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(),
+            list_RAM=list_RAM,
+            list_SSD=list_SSD,
+            list_HDD=list_HDD,
+            list_CPU=list_CPU,
+            list_GPU=list_GPU,
+            list_PSU=list_PSU,
+            list_PC_Cooling=list_PC_Cooling,
+            list_Peripheral=list_Peripheral)
 
 @app.route('/simulator/motherboard', methods=['POST', 'GET'])
 def simulator_choose_motherboard():

@@ -3,13 +3,13 @@
 * MotherBoard (tarjeta madre)
 
 * Components (componentes)
-    * RAM (Random Access Memory)
-    * SSD (Solid State Drive)
+    * RAM (Random Access Memory) !
+    * SSD (Solid State Drive) !
     * HDD (Hard Drive Disk)
     * CPU (Central Processing Unit)
-    * GPU (Graphics Processing Unit)
+    * GPU (Graphics Processing Unit) !
     * PSU (Power Supply Unit)
-    * PC Cooling
+    * PC Cooling !
 
 ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']
 
