@@ -135,7 +135,7 @@
                     <ul class="no_dots" id="peripheral">        
                     {% for peripheral in list_Peripheral%}
                         <li>
-                            <input type="checkbox"/>
+                            <input type="checkbox" name="peripherals" data-price="{{peripheral.price}}" data-name="{{peripheral.name}}" id="{{peripheral.id}}"/>
                             <p>Name: {{peripheral.name}}</p>
                             <p class="description_list">Price: {{peripheral.price}}</p>
                             <p class="description_list">Description: {{peripheral.description}}</p>
@@ -154,36 +154,44 @@
             <ul class="no_dots" id="shopping_items">
 
             </ul>
-            <p id="shopping price">TOTAL: </p>
+            <p>TOTAL: </p>
+            <p id="total_price">0</p>
         </div>
 
         <!--['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']-->
     </body>
-<!--
-            // update complete from todo
-            const checkboxes = document.querySelectorAll('.check-completed');
-            for (let i = 0; i < checkboxes.length; i++){
-                const checkbox = checkboxes[i];
-                checkbox.onchange = function(e){
-                    console.log("e", e);
-                    const new_completed = e.target.checked;
-                    const todo_id = e.target.dataset['id'];
-                    console.log(todo_id);
-                    fetch('/todos/'+todo_id+'/set-completed', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            'new_completed': new_completed
-                        }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }).catch(function(){
-                        document.getElementById('error').className = '';
-                    })
+
+    <script>
+        // append child
+        const peripherals = document.getElementsByName('peripherals');
+        for (i = 0; i < peripherals.length; i++){
+            const peripheral = peripherals[i];
+            peripheral.onchange = function(e){
+                const change = e.target.checked;
+                const name = e.target.dataset['name'];
+                const price = e.target.dataset['price'];
+                if (change === true){
+                    // append child
+                    let li = document.createElement('li');
+                    li.setAttribute('name', name);
+                    li.innerHTML = String(name) + " " + String(price);
+                    document.getElementById('shopping_items').appendChild(li);
+                    // anadir de precio
+                    total_price =  document.getElementById('total_price').innerHTML;
+                    total_price = parseFloat(total_price) + parseFloat(price);
+                    document.getElementById('total_price').innerHTML = total_price;
+                }
+                else if (change === false){
+                    // remove child
+                    const elem = document.getElementsByName(name);
+                    document.getElementById('shopping_items').removeChild(elem[0]);
+                    // quitar de precio
+                    total_price =  document.getElementById('total_price').innerHTML;
+                    total_price = parseFloat(total_price) - parseFloat(price);
+                    document.getElementById('total_price').innerHTML = total_price;
                 }
             }
--->
-    <script>
-        
+        }
+
     </script>
 </html>
