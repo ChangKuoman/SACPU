@@ -95,9 +95,6 @@ def check_password_difficulty(password_to_check):
 # home
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    global actual_user
-    actual_user = ''
-    print("user", actual_user)
     return render_template('index.html')
 
 # login
@@ -180,8 +177,26 @@ def simulator_motherboard(motherboard):
     global actual_user
     error = False
     try:
-        componentTuples= db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard == int(motherboard)).all()
-        componentList = [componentTuple[0] for componentTuple in componentTuples]
+        query = db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard==int(motherboard))
+        # componentes compatibles con el id de la motherboard (RAM, SSD, GPU, PC Cooling)
+        list_RAM = [component[0] for component in query.filter_by(componentType = 'RAM')]
+        print(list_RAM)
+        list_SSD = [component[0] for component in query.filter_by(componentType = 'SSD')]
+        list_GPU = [component[0] for component in query.filter_by(componentType = 'GPU')]
+        list_PC_Cooling = [component[0] for component in query.filter_by(componentType = 'PC Cooling')]
+
+        query2 = db.session.query(Component)
+        # componentes que no requieren compatibilidad
+        list_HDD = query2.filter_by(componentType = 'HDD').all()
+        list_CPU = query2.filter_by(componentType = 'CPU').all()
+        list_PSU = query2.filter_by(componentType = 'PSU').all()
+        list_Peripheral = query2.filter_by(componentType = 'Peripheral').all()
+
+        # TODO: separar los componentes por tipo (para imprimir por tipo en el simulator_motherboard.html) y los que no son ponerlos por tipo,
+        # pero qwue no son necesarios que tengan compatibilidad. Asimismo con los periféricos, pero puedas elegri varios tipos de periféricos
+        # con checkbox
+        # poner precio en c/u al imprimir al lado: Name:{{component.name}}-Price{{componente.price}}
+
     except Exception as e:
         error = True
         print(e)
@@ -193,7 +208,16 @@ def simulator_motherboard(motherboard):
     if error:
         abort(400)
     else:
-        return render_template('simulator_motherboard.html', motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(), components=componentList)
+        return render_template('simulator_motherboard.html',
+            motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(),
+            list_RAM=list_RAM,
+            list_SSD=list_SSD,
+            list_HDD=list_HDD,
+            list_CPU=list_CPU,
+            list_GPU=list_GPU,
+            list_PSU=list_PSU,
+            list_PC_Cooling=list_PC_Cooling,
+            list_Peripheral=list_Peripheral)
 
 @app.route('/simulator/motherboard', methods=['POST', 'GET'])
 def simulator_choose_motherboard():
@@ -211,11 +235,350 @@ def simulator_choose_motherboard():
     
     return jsonify(response)
 
+# vista admin
+@app.route('/admin', methods=['POST', 'GET'])
+def admin():
+    # TODO: hacer que /simulator tenga un botòn que rediriga aquì (html)
+    global actual_user
+    if actual_user == '':
+        abort(401)
+    elif actual_user.role != 'admin':
+        abort(401)
+    else:
+        return render_template('admin.html')
+
+@app.route("/admin/<action>")
+def admin_action(action):
+    global actual_user
+    if actual_user == '':
+        abort(401)
+    elif actual_user.role != 'admin':
+        abort(401)
+    elif action == "create":
+        print(Component.query.all())
+        return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
+    elif action == "update":
+        return render_template("admin_update.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
+    elif action == "delete":
+        componentTuples= db.session.query(Compatible, MotherBoard, Component).filter(Compatible.id_motherboard==MotherBoard.id).filter(Compatible.id_component==Component.id).all()
+        for i in componentTuples:
+            print(i)
+        return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all(), compatibles=componentTuples)
+    else:
+        abort(404)
+
+# create routes
+@app.route("/admin/create/motherboard", methods=['POST', 'GET'])
+def create_motherboard():
+    response = {}
+    try:
+        motherboard_name = request.get_json()["motherboard_name"]
+        motherboard_description = request.get_json()["motherboard_description"]
+        motherboard_price = request.get_json()["motherboard_price"]
+        response['error'] = False
+        if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+            response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+        elif float(motherboard_price) <= 0:
+            response['invalid_register'] = "Motherboard price cannot be negative or zero"
+        elif motherboard_description == '':
+            response['invalid_register'] = "Description cannot be empty"
+        else:
+            response['invalid_register'] = False
+            motherboard = MotherBoard(name=motherboard_name, description=motherboard_description, price=motherboard_price)
+            db.session.add(motherboard)
+            db.session.commit()
+
+            response['child_name'] = motherboard_name
+            response['child_id'] = motherboard.id
+            print(motherboard.id)
+            
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/create/component", methods=['POST', 'GET'])
+def create_component():
+    response = {}
+    try:
+        component_name = request.get_json()["component_name"]
+        component_description = request.get_json()["component_description"]
+        component_type = request.get_json()["component_type"]
+        component_price = request.get_json()["component_price"]
+        response['error'] = False
+        if component_name in [component.name for component in Component.query.all()]:
+            response['invalid_register'] = "Component with same name found in database. Try another name"
+        elif float(component_price) <= 0:
+            response['invalid_register'] = "Component price cannot be negative or zero"
+        elif component_description == '':
+            response['invalid_register'] = "Description cannot be empty"
+        elif component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
+            response['invalid_register'] = "Component type is not valid"
+        else:
+            response['invalid_register'] = False
+            component = Component(name=component_name, description=component_description, price=component_price, componentType=component_type)
+            db.session.add(component)
+            db.session.commit()
+
+            response['child_name'] = component_name
+            response['child_id'] = component.id
+            print(component.id)
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/create/compatible", methods=['POST', 'GET'])
+def create_compatible():
+    response = {}
+    try:
+        id_motherboard = request.get_json()["id_motherboard"]
+        id_component = request.get_json()["id_component"]
+
+        response['error'] = False
+        query = Compatible.query.filter(Compatible.id_component==id_component).filter(Compatible.id_motherboard==id_motherboard).all()
+
+        if query != []:
+            response['invalid_register'] = "The compatible choosen already exists"
+        else:
+            response['invalid_register'] = False
+            compatible = Compatible(id_component=id_component, id_motherboard=id_motherboard)
+            db.session.add(compatible)
+            db.session.commit()
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+# delete routes
+@app.route("/admin/delete/motherboard", methods=['POST', 'GET'])
+def delete_motherboard():
+    response = {}
+    try:
+        id_motherboard = request.get_json()["id_motherboard"]
+
+        response['error'] = False
+        # necesario primero eliminar dependecias SI existen
+        query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
+        query1.delete()
+        db.session.commit()
+        
+        query2 = MotherBoard.query.filter_by(id=id_motherboard)
+        print(query2.all())
+
+        if query2.all() == []:
+            response['invalid_register'] = "There is no motherboard in database"
+        else:
+            response['invalid_register'] = False
+            response['child_id'] = f"m-{id_motherboard}"
+            query2.delete()
+            db.session.commit()
+
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/delete/component", methods=['POST', 'GET'])
+def delete_component():
+    response = {}
+    try:
+        id_component = request.get_json()["id_component"]
+
+        response['error'] = False
+        # necesario primero eliminar dependecias SI existen
+        query1 = Compatible.query.filter_by(id_component=id_component)
+        query1.delete()
+        db.session.commit()
+
+        query2 = Component.query.filter_by(id=id_component)
+        print(query2.all())
+
+        if query2.all() == []:
+            response['invalid_register'] = "There is no component in database"
+        else:
+            response['invalid_register'] = False
+            response['child_id'] = f"c-{id_component}"
+            query2.delete()
+            db.session.commit()
+
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/delete/compatible", methods=['POST', 'GET'])
+def delete_compatible():
+    response = {}
+    try:
+        id_compatible = request.get_json()["id_compatible"]
+        id_motherboard, id_component = id_compatible.split()
+        print(id_motherboard, "-", id_component)
+
+        response['error'] = False
+        query = Compatible.query.filter(Compatible.id_motherboard==id_motherboard).filter(Compatible.id_component==id_component)
+        print(query.all())
+
+        if query.all() == []:
+            response['invalid_register'] = "There is no compatible in database"
+        else:
+            response['invalid_register'] = False
+            response['child_id'] = f"mc-{id_motherboard}-{id_component}"
+            query.delete()
+            db.session.commit()
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+# update routes
+@app.route("/admin/update/motherboard", methods=['POST', 'GET'])
+def update_motherboard():
+    print("AQUI")
+    response = {}
+    try:
+        motherboard_id = request.get_json()["motherboard_id"]
+
+        motherboard_name = request.get_json()["motherboard_name"]
+        motherboard_price = request.get_json()["motherboard_price"]
+        motherboard_description = request.get_json()["motherboard_description"]
+
+        response['error'] = False
+        query = MotherBoard.query.filter(MotherBoard.id==motherboard_id)
+
+        if query == []:
+            response['invalid_register'] = "There is motherboard in database"
+        else:
+            query = query.first()
+            response['invalid_register'] = False
+
+            if motherboard_name != '':
+                if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+                    response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+                else:
+                    query.name = motherboard_name
+                    response['child_id'] = f"m-{motherboard_id}"
+                    response['child_name'] = motherboard_name
+                    
+            if motherboard_price != '':
+                if float(motherboard_price) <= 0:
+                    response['invalid_register'] = "Motherboard price cannot be negative or zero"
+                else:
+                    query.price = motherboard_price
+            if motherboard_description != '':
+                query.description = motherboard_description
+
+            if response['invalid_register']:
+                # actualizacion no se hace
+                print("actualizacion NO hecha")
+                db.session.rollback()
+            else:
+                # actualizacion se hace
+                query.dateModified = func.now()
+                db.session.commit()
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
+@app.route("/admin/update/component", methods=['POST', 'GET'])
+def update_component():
+    response = {}
+    try:
+        component_id = request.get_json()["component_id"]
+
+        component_name = request.get_json()["component_name"]
+        component_price = request.get_json()["component_price"]
+        component_description = request.get_json()["component_description"]
+        component_type = request.get_json()["component_type"]
+
+        response['error'] = False
+        query = Component.query.filter(Component.id==component_id)
+
+        if query == []:
+            response['invalid_register'] = "There is component in database"
+        else:
+            query = query.first()
+            response['invalid_register'] = False
+
+            if component_name != '':
+                if component_name in [component.name for component in Component.query.all()]:
+                    response['invalid_register'] = "Component with same name found in database. Try another name"
+                else:
+                    query.name = component_name
+                    response['child_id'] = f"c-{component_id}"
+                    response['child_name'] = component_name
+                    
+            if component_price != '':
+                if float(component_price) <= 0:
+                    response['invalid_register'] = "Component price cannot be negative or zero"
+                else:
+                    query.price = component_price
+            if component_description != '':
+                query.description = component_description
+            if component_type != '':
+                if component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
+                    response['invalid_register'] = "Component type is not valid"
+                else:
+                    query.componentType = component_type
+
+            if response['invalid_register']:
+                # actualizacion no se hace
+                print("actualizacion NO hecha")
+                db.session.rollback()
+            else:
+                # actualizacion se hace
+                query.dateModified = func.now()
+                db.session.commit()
+
+    except Exception as e:
+        response['error'] = True
+        print(e)
+        db.session.rollback()
+    finally:
+        db.session.close()
+    
+    return jsonify(response)
+
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
 def redirect_errors(error):
     if int(error) == 500:
         abort(500)
+    if int(error) == 401:
+        abort(401)
     else:
         abort(404)
 

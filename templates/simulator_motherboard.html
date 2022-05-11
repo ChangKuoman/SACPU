@@ -8,6 +8,12 @@
     </head>
 
     <body class="fondo">
+        <div class="boton_div">
+            <a href="/simulator" target="_self">
+                REGRESAR
+            </a>
+        </div>
+
         <header class="header">
             <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
             <h1>
@@ -15,14 +21,233 @@
             </h1>
         </header>
         <div>
-            {{motherboard.name}}
+            <h2>YOUR MOTHERBOARD: {{motherboard.name}}</h2>
+            <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
         </div>
+
         <div>
-            {% for component in components%}
-                <p>
-                    {{component.name}}
-                </p>
-            {% endfor %}
+            <form id="form" name="form">
+                <h1>COMPONENTS THAT NEED COMPATIBILITY</h1>
+
+                <div>
+                    <h2>RAM</h2>
+                    <ul class="no_dots">        
+                    {% for ram in list_RAM%}
+                        <li>
+                            <input type="radio" id={{ram.id}} name="ram" value={{ram.id}} data-price="{{ram.price}}" data-name="{{ram.name}}"/>
+                            <label for={{ram.id}}>Name: {{ram.name}}</label>
+                            <p class="description_list">Price: {{ram.price}}</p>
+                            <p class="description_list">Description: {{ram.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    <h2>SSD</h2>
+                    <ul class="no_dots">        
+                    {% for ssd in list_SSD%}
+                        <li>
+                            <input type="radio" id={{ssd.id}} name="ssd" value={{ssd.id}} data-price="{{ssd.price}}" data-name="{{ssd.name}}"/>
+                            <label for={{ssd.id}}>Name: {{ssd.name}}</label>
+                            <p class="description_list">Price: {{ssd.price}}</p>
+                            <p class="description_list">Description: {{ssd.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    <h2>GPU</h2>
+                    <ul class="no_dots">        
+                    {% for gpu in list_GPU%}
+                        <li>
+                            <input type="radio" id={{gpu.id}} name="gpu" value={{gpu.id}} data-price="{{gpu.price}}" data-name="{{gpu.name}}"/>
+                            <label for={{gpu.id}}>Name: {{gpu.name}}</label>
+                            <p class="description_list">Price: {{gpu.price}}</p>
+                            <p class="description_list">Description: {{gpu.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    <h2>PC Cooling</h2>
+                    <ul class="no_dots">        
+                    {% for pc_cooling in list_PC_Cooling%}
+                        <li>
+                            <input type="radio" id={{pc_cooling.id}} name="pc_cooling" value={{pc_cooling.id}} data-price="{{pc_cooling.price}}" data-name="{{pc_cooling.name}}"/>
+                            <label for={{pc_cooling.id}}>Name: {{pc_cooling.name}}</label>
+                            <p class="description_list">Price: {{pc_cooling.price}}</p>
+                            <p class="description_list">Description: {{pc_cooling.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                
+                <h1>COMPONENTS THAT DO NOT NEED COMPATIBILITY</h1>
+                <div>
+                    <h2>HDD</h2>
+                    <ul class="no_dots">        
+                    {% for hdd in list_HDD%}
+                        <li>
+                            <input type="radio" id={{hdd.id}} name="hdd" value={{hdd.id}} data-price="{{hdd.price}}" data-name="{{hdd.name}}"/>
+                            <label for={{hdd.id}}>Name: {{hdd.name}}</label>
+                            <p class="description_list">Price: {{hdd.price}}</p>
+                            <p class="description_list">Description: {{hdd.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    <h2>CPU</h2>
+                    <ul class="no_dots">        
+                    {% for cpu in list_CPU%}
+                        <li>
+                            <input type="radio" id={{cpu.id}} name="cpu" value={{cpu.id}} data-price="{{cpu.price}}" data-name="{{cpu.name}}"/>
+                            <label for={{cpu.id}}>Name: {{cpu.name}}</label>
+                            <p class="description_list">Price: {{cpu.price}}</p>
+                            <p class="description_list">Description: {{cpu.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    <h2>PSU</h2>
+                    <ul class="no_dots">        
+                    {% for psu in list_PSU%}
+                        <li>
+                            <input type="radio" id={{psu.id}} name="psu" value={{psu.id}} data-price="{{psu.price}}" data-name="{{psu.name}}"/>
+                            <label for={{psu.id}}>Name: {{psu.name}}</label>
+                            <p class="description_list">Price: {{psu.price}}</p>
+                            <p class="description_list">Description: {{psu.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <h1>PERIPHERALS</h1>
+
+                <div>
+                    <h2>Peripheral</h2>
+                    <ul class="no_dots" id="peripheral">        
+                    {% for peripheral in list_Peripheral%}
+                        <li>
+                            <input type="checkbox" name="peripherals" data-price="{{peripheral.price}}" data-name="{{peripheral.name}}" id="{{peripheral.id}}"/>
+                            <p>Name: {{peripheral.name}}</p>
+                            <p class="description_list">Price: {{peripheral.price}}</p>
+                            <p class="description_list">Description: {{peripheral.description}}</p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+
+                <input type="submit" value="Submit"/>
+            </form>
         </div>
+
+        <!--PARA LA COMPRA/PONER AL LADO-->
+        <div>
+            <h2>SHOPPING CART</h2>
+            <ul class="no_dots" id="shopping_items">
+
+            </ul>
+            <p>TOTAL: S/.</p>
+            <p id="total_price">{{motherboard.price}}</p>
+        </div>
+
+        <!--['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']-->
     </body>
+
+    <script>
+        // PARA PERIFERICOS
+        const peripherals = document.getElementsByName('peripherals');
+        for (i = 0; i < peripherals.length; i++){
+            const peripheral = peripherals[i];
+            peripheral.onchange = function(e){
+                const change = e.target.checked;
+                const name = e.target.dataset['name'];
+                const price = e.target.dataset['price'];
+                if (change === true){
+                    // append child
+                    let li = document.createElement('li');
+                    li.setAttribute('name', name);
+                    li.innerHTML = String(name) + " " + String(price);
+                    document.getElementById('shopping_items').appendChild(li);
+                    // anadir de precio
+                    total_price =  document.getElementById('total_price').innerHTML;
+                    total_price = (parseFloat(total_price) + parseFloat(price)).toFixed(2);
+                    document.getElementById('total_price').innerHTML = total_price;
+                }
+                else if (change === false){
+                    // remove child
+                    const elem = document.getElementsByName(name);
+                    document.getElementById('shopping_items').removeChild(elem[0]);
+                    // quitar de precio
+                    total_price =  document.getElementById('total_price').innerHTML;
+                    total_price = (parseFloat(total_price) - parseFloat(price)).toFixed(2);
+                    document.getElementById('total_price').innerHTML = total_price;
+                }
+            }
+        }
+
+        // PARA RADIO INPUT
+        const psu_list = document.getElementsByName('psu');
+        const cpu_list = document.getElementsByName('cpu');
+        const hdd_list = document.getElementsByName('hdd');
+        const ram_list = document.getElementsByName('ram');
+        const ssd_list = document.getElementsByName('ssd');
+        const gpu_list = document.getElementsByName('gpu');
+        const pc_cooling_list = document.getElementsByName('pc_cooling');
+        
+        var elements = 
+            Array.from(psu_list)
+            .concat(Array.from(cpu_list))
+            .concat(Array.from(hdd_list))
+            .concat(Array.from(ram_list))
+            .concat(Array.from(ssd_list))
+            .concat(Array.from(gpu_list))
+            .concat(Array.from(pc_cooling_list));
+
+        for (i = 0; i < elements.length; i++){
+        const item = elements[i];
+
+            item.onchange = function(e){
+        //    console.log(e.target);
+
+                const change = e.target.checked;
+                const name = e.target.dataset['name'];
+                const price = e.target.dataset['price'];
+                if (change === true){
+                    // append child
+                    let li = document.createElement('li');
+                    li.setAttribute('name', name);
+                    li.innerHTML = String(name) + " " + String(price);
+                    document.getElementById('shopping_items').appendChild(li);
+                    // anadir de precio
+                    total_price =  document.getElementById('total_price').innerHTML;
+                    total_price = (parseFloat(total_price) + parseFloat(price)).toFixed(2);
+                    document.getElementById('total_price').innerHTML = total_price;
+                }
+
+                // after this iterate again and chase the one has changed
+                for (i = 0; i<elements.length; i++){
+                    const item2 = elements[i];
+                    const list = document.getElementsByName(item2.dataset.name);
+                    if (list.length > 0 && item2.checked === false){
+                        const price = item2.dataset.price;
+                        // remove child
+                        document.getElementById('shopping_items').removeChild(list[0]);
+                        // quitar de precio
+                        total_price =  document.getElementById('total_price').innerHTML;
+                        total_price = (parseFloat(total_price) - parseFloat(price)).toFixed(2);
+                        document.getElementById('total_price').innerHTML = total_price;
+                    }
+                }
+            }
+        }
+
+    </script>
 </html>

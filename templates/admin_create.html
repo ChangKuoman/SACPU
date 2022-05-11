@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>
+            SACPU - Admin
+        </title>
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+
+    <body>
+        <div id="error" class="hidden">
+            <p class="error_text" id="error_text">
+
+            </p>
+        </div>
+
+        <div class="boton_div">
+            <a href="/admin" target="_self">
+                ADMIN
+            </a>
+        </div>
+
+        <div>
+            <h2>CREATE MOTHERBOARD</h2>
+
+            <form id="form_motherboard">
+                <p>Nombre de la tarjeta madre</p>
+                <input type="text" id="motherboard_name"/>
+                <P>Descripción de la Tajeta Madre</P>
+                <input type="text" id="motherboard_description"/>
+                <P>Precio</P>
+                <input type="number" id="motherboard_price" step="0.01"/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+        <div>
+            <h2>CREATE COMPONENT</h2>
+
+            <form id="form_component">
+                <p>Nombre del Componente</p>
+                <input type="text" id="component_name"/>
+                <P>Descripción del Componente</P>
+                <input type="text" id="component_description"/>
+                <P>Tipo de Componente</P>
+                <select id="component_type">
+                    <option value="RAM">RAM (Random Access Memory)</option>
+                    <option value="SSD">SSD (Solid State Drive)</option>
+                    <option value="HDD">HDD (Hard Drive Disk)</option>
+                    <option value="CPU">CPU (Central Processing Unit)</option>
+                    <option value="GPU">GPU (Graphics Processing Unit)</option>
+                    <option value="PSU">PSU (Power Supply Unit)</option>
+                    <option value="PC Cooling">PC Cooling</option>
+                    <option value="Peripheral">Peripheral</option>
+                </select>
+                <P>Precio</P>
+                <input type="number" id="component_price" step="0.01"/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+        <div>
+            <h2>CREATE COMPATIBLE</h2>
+            
+            <form id="form_compatible">
+                <p>Motherboard</p>
+                <select name="motherboard" id="id_motherboard">
+                    {% for motherboard in motherboards %}
+                    <option value={{motherboard.id}}>{{motherboard.name}}</option>
+                    {% endfor %}
+                </select>
+
+                <p>Component</p>
+                <select name="component" id="id_component">
+                    {% for component in components %}
+                    <option value={{component.id}}>{{component.name}}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+
+    </body>
+    <!--script must be here-->
+    <script src="/static/js/admin_create.js"></script>
+</html>
