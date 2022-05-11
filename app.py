@@ -20,8 +20,8 @@ anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
 
 # configurations
-app = Flask(__name__, static_folder=anderson_static_path)
-app.config['SQLALCHEMY_DATABASE_URI'] = anderson_uri
+app = Flask(__name__, static_folder=chang_static_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -44,7 +44,9 @@ class MotherBoard(db.Model):
     name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
+    createBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
     dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
+    modifyBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
 
     def __repr__(self):
         return f'motherboard: {self.name}'
@@ -57,17 +59,19 @@ class Component(db.Model):
     componentType = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
+    createBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
     dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
+    modifyBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
 
     def __repr__(self):
         return f'component: {self.name}'
 
 class Compatible(db.Model):
     __tablename__ = 'compatible'
-    id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
+    id_motherboard = db.Column(db.String(), ForeignKey('motherboard.id'), primary_key=True)
     id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
     dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
-    dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
+    createBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
 
@@ -270,6 +274,7 @@ def admin_action(action):
 # create routes
 @app.route("/admin/create/motherboard", methods=['POST', 'GET'])
 def create_motherboard():
+    global actual_user
     response = {}
     try:
         motherboard_name = request.get_json()["motherboard_name"]
@@ -284,7 +289,12 @@ def create_motherboard():
             response['invalid_register'] = "Description cannot be empty"
         else:
             response['invalid_register'] = False
-            motherboard = MotherBoard(name=motherboard_name, description=motherboard_description, price=motherboard_price)
+            motherboard = MotherBoard(
+                name=motherboard_name,
+                description=motherboard_description,
+                price=motherboard_price,
+                createBy = actual_user.username,
+                modifyBy = actual_user.username)
             db.session.add(motherboard)
             db.session.commit()
 
@@ -303,6 +313,7 @@ def create_motherboard():
 
 @app.route("/admin/create/component", methods=['POST', 'GET'])
 def create_component():
+    global actual_user
     response = {}
     try:
         component_name = request.get_json()["component_name"]
@@ -320,7 +331,13 @@ def create_component():
             response['invalid_register'] = "Component type is not valid"
         else:
             response['invalid_register'] = False
-            component = Component(name=component_name, description=component_description, price=component_price, componentType=component_type)
+            component = Component(
+                name=component_name,
+                description=component_description,
+                price=component_price,
+                componentType=component_type,
+                createBy = actual_user.username,
+                modifyBy = actual_user.username)
             db.session.add(component)
             db.session.commit()
 
@@ -338,6 +355,7 @@ def create_component():
 
 @app.route("/admin/create/compatible", methods=['POST', 'GET'])
 def create_compatible():
+    global actual_user
     response = {}
     try:
         id_motherboard = request.get_json()["id_motherboard"]
@@ -350,7 +368,10 @@ def create_compatible():
             response['invalid_register'] = "The compatible choosen already exists"
         else:
             response['invalid_register'] = False
-            compatible = Compatible(id_component=id_component, id_motherboard=id_motherboard)
+            compatible = Compatible(
+                id_component=id_component,
+                id_motherboard=id_motherboard,
+                createBy = actual_user.username)
             db.session.add(compatible)
             db.session.commit()
     except Exception as e:
@@ -461,7 +482,7 @@ def delete_compatible():
 # update routes
 @app.route("/admin/update/motherboard", methods=['POST', 'GET'])
 def update_motherboard():
-    print("AQUI")
+    global actual_user
     response = {}
     try:
         motherboard_id = request.get_json()["motherboard_id"]
@@ -502,6 +523,7 @@ def update_motherboard():
             else:
                 # actualizacion se hace
                 query.dateModified = func.now()
+                query.modifyBy = actual_user.username
                 db.session.commit()
 
     except Exception as e:
@@ -515,6 +537,7 @@ def update_motherboard():
 
 @app.route("/admin/update/component", methods=['POST', 'GET'])
 def update_component():
+    global actual_user
     response = {}
     try:
         component_id = request.get_json()["component_id"]
@@ -561,6 +584,7 @@ def update_component():
             else:
                 # actualizacion se hace
                 query.dateModified = func.now()
+                query.modifyBy = actual_user.username
                 db.session.commit()
 
     except Exception as e:
