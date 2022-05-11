@@ -51,7 +51,6 @@ for (i = 0; i < elements.length; i++){
 const item = elements[i];
 
     item.onchange = function(e){
-//    console.log(e.target);
 
         const change = e.target.checked;
         const name = e.target.dataset['name'];
@@ -82,5 +81,7 @@ const item = elements[i];
                 document.getElementById('total_price').innerHTML = total_price;
             }
         }
-    }
+    }.catch(function() {
+        console.log('error simulator motherboard');
+    });
 }

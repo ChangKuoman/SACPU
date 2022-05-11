@@ -19,27 +19,23 @@ document.getElementById('form').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
-            console.log('1');
             // when is an error
             window.location.href = '/errors/500'
         }
         else if (! jsonResponse['invalid_register']){
-            console.log('2');
             // when register is successful
             window.location.href = '/login';
         }
         else {
-            console.log('3');
             // when register is NOT successful
             document.getElementById('error_text').textContent = String(jsonResponse['invalid_register']);
             document.getElementById('error').className = '';
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error register');
     });
 }
 

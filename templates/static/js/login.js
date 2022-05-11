@@ -30,7 +30,7 @@ document.getElementById('form').onsubmit = function(e) {
             window.location.href = '/simulator'
         }
     }).catch(function() {
-        console.log('error_login')
+        console.log('error login');
     });
 }
 

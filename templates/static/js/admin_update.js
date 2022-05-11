@@ -1,7 +1,5 @@
 // function for form_motherboard form
-console.log("AFUERA");
 document.getElementById('form_motherboard').onsubmit = function(e) {
-    console.log("AQUI");
     e.preventDefault();
     const motherboard_id = document.getElementById('motherboard_id').value;
 
@@ -23,7 +21,6 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -35,13 +32,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
             document.getElementById('form_motherboard').reset();
 
             // update name from motherboard form IF changed
-            console.log(jsonResponse['child_name'] !== undefined);
-            console.log(jsonResponse['child_name']);
             if (jsonResponse['child_name'] !== undefined){
-                console.log(jsonResponse['child_id']);
-                console.log(document.getElementById(jsonResponse['child_id']));
-                console.log(document.getElementById(jsonResponse['child_id']).innerHTML);
-
                 document.getElementById(jsonResponse['child_id']).innerHTML = String(jsonResponse['child_name']);
             }
         
@@ -53,7 +44,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin update motherboard');
     });
 }
 // function for on change error
@@ -86,7 +77,6 @@ document.getElementById('form_component').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -110,7 +100,7 @@ document.getElementById('form_component').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin update component');
     });
 }
 // function for on change error
