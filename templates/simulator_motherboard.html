@@ -34,7 +34,7 @@
                     <ul class="no_dots">        
                     {% for ram in list_RAM%}
                         <li>
-                            <input type="radio" id={{ram.id}} name="ram" value={{ram.id}}/>
+                            <input type="radio" id={{ram.id}} name="ram" value={{ram.id}} data-price="{{ram.price}}" data-name="{{ram.name}}"/>
                             <label for={{ram.id}}>Name: {{ram.name}}</label>
                             <p class="description_list">Price: {{ram.price}}</p>
                             <p class="description_list">Description: {{ram.description}}</p>
@@ -48,7 +48,7 @@
                     <ul class="no_dots">        
                     {% for ssd in list_SSD%}
                         <li>
-                            <input type="radio" id={{ssd.id}} name="ssd" value={{ssd.id}}/>
+                            <input type="radio" id={{ssd.id}} name="ssd" value={{ssd.id}} data-price="{{ssd.price}}" data-name="{{ssd.name}}"/>
                             <label for={{ssd.id}}>Name: {{ssd.name}}</label>
                             <p class="description_list">Price: {{ssd.price}}</p>
                             <p class="description_list">Description: {{ssd.description}}</p>
@@ -62,7 +62,7 @@
                     <ul class="no_dots">        
                     {% for gpu in list_GPU%}
                         <li>
-                            <input type="radio" id={{gpu.id}} name="gpu" value={{gpu.id}}/>
+                            <input type="radio" id={{gpu.id}} name="gpu" value={{gpu.id}} data-price="{{gpu.price}}" data-name="{{gpu.name}}"/>
                             <label for={{gpu.id}}>Name: {{gpu.name}}</label>
                             <p class="description_list">Price: {{gpu.price}}</p>
                             <p class="description_list">Description: {{gpu.description}}</p>
@@ -76,7 +76,7 @@
                     <ul class="no_dots">        
                     {% for pc_cooling in list_PC_Cooling%}
                         <li>
-                            <input type="radio" id={{pc_cooling.id}} name="pc_cooling" value={{pc_cooling.id}}/>
+                            <input type="radio" id={{pc_cooling.id}} name="pc_cooling" value={{pc_cooling.id}} data-price="{{pc_cooling.price}}" data-name="{{pc_cooling.name}}"/>
                             <label for={{pc_cooling.id}}>Name: {{pc_cooling.name}}</label>
                             <p class="description_list">Price: {{pc_cooling.price}}</p>
                             <p class="description_list">Description: {{pc_cooling.description}}</p>
@@ -91,7 +91,7 @@
                     <ul class="no_dots">        
                     {% for hdd in list_HDD%}
                         <li>
-                            <input type="radio" id={{hdd.id}} name="hdd" value={{hdd.id}}/>
+                            <input type="radio" id={{hdd.id}} name="hdd" value={{hdd.id}} data-price="{{hdd.price}}" data-name="{{hdd.name}}"/>
                             <label for={{hdd.id}}>Name: {{hdd.name}}</label>
                             <p class="description_list">Price: {{hdd.price}}</p>
                             <p class="description_list">Description: {{hdd.description}}</p>
@@ -105,7 +105,7 @@
                     <ul class="no_dots">        
                     {% for cpu in list_CPU%}
                         <li>
-                            <input type="radio" id={{cpu.id}} name="cpu" value={{cpu.id}}/>
+                            <input type="radio" id={{cpu.id}} name="cpu" value={{cpu.id}} data-price="{{cpu.price}}" data-name="{{cpu.name}}"/>
                             <label for={{cpu.id}}>Name: {{cpu.name}}</label>
                             <p class="description_list">Price: {{cpu.price}}</p>
                             <p class="description_list">Description: {{cpu.description}}</p>
@@ -193,12 +193,28 @@
             }
         }
 
-        // PARA PSU 
+        // PARA RADIO INPUT
         const psu_list = document.getElementsByName('psu');
-        for (i = 0; i < psu_list.length; i++){
-            const psu = psu_list[i];
+        const cpu_list = document.getElementsByName('cpu');
+        const hdd_list = document.getElementsByName('hdd');
+        const ram_list = document.getElementsByName('ram');
+        const ssd_list = document.getElementsByName('ssd');
+        const gpu_list = document.getElementsByName('gpu');
+        const pc_cooling_list = document.getElementsByName('pc_cooling');
+        
+        var elements = 
+            Array.from(psu_list)
+            .concat(Array.from(cpu_list))
+            .concat(Array.from(hdd_list))
+            .concat(Array.from(ram_list))
+            .concat(Array.from(ssd_list))
+            .concat(Array.from(gpu_list))
+            .concat(Array.from(pc_cooling_list));
 
-            psu.onchange = function(e){
+        for (i = 0; i < elements.length; i++){
+        const item = elements[i];
+
+            item.onchange = function(e){
         //    console.log(e.target);
 
                 const change = e.target.checked;
@@ -217,11 +233,11 @@
                 }
 
                 // after this iterate again and chase the one has changed
-                for (i = 0; i<psu_list.length; i++){
-                    const psu2 = psu_list[i];
-                    const list = document.getElementsByName(psu2.dataset.name);
-                    if (list.length > 0 && psu2.checked === false){
-                        const price = psu2.dataset.price;
+                for (i = 0; i<elements.length; i++){
+                    const item2 = elements[i];
+                    const list = document.getElementsByName(item2.dataset.name);
+                    if (list.length > 0 && item2.checked === false){
+                        const price = item2.dataset.price;
                         // remove child
                         document.getElementById('shopping_items').removeChild(list[0]);
                         // quitar de precio
