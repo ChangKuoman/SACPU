@@ -32,7 +32,7 @@ class User(db.Model):
     username = db.Column(db.String(), primary_key=True)
     password = db.Column(db.String(), nullable=False)
     role = db.Column(db.String(), nullable=False, default="user")
-    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
+    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
 
     def __repr__(self):
         return f'user: {self.username}'
@@ -43,10 +43,10 @@ class MotherBoard(db.Model):
     price = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
-    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
-    createBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
-    dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modifyBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
+    create_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
+    modify_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
 
     def __repr__(self):
         return f'motherboard: {self.name}'
@@ -56,12 +56,12 @@ class Component(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(), nullable=False, unique=True)
-    componentType = db.Column(db.String(), nullable=False)
+    component_type = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
-    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
-    createBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
-    dateModified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modifyBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
+    create_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
+    modify_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
 
     def __repr__(self):
         return f'component: {self.name}'
@@ -70,8 +70,8 @@ class Compatible(db.Model):
     __tablename__ = 'compatible'
     id_motherboard = db.Column(db.String(), ForeignKey('motherboard.id'), primary_key=True)
     id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
-    dateCreated = db.Column(db.DateTime, nullable=False, default=func.now())
-    createBy = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
+    create_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
 
@@ -183,22 +183,17 @@ def simulator_motherboard(motherboard):
     try:
         query = db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard==int(motherboard))
         # componentes compatibles con el id de la motherboard (RAM, SSD, GPU, PC Cooling)
-        list_RAM = [component[0] for component in query.filter_by(componentType = 'RAM')]
-        list_SSD = [component[0] for component in query.filter_by(componentType = 'SSD')]
-        list_GPU = [component[0] for component in query.filter_by(componentType = 'GPU')]
-        list_PC_Cooling = [component[0] for component in query.filter_by(componentType = 'PC Cooling')]
+        list_RAM = [component[0] for component in query.filter_by(component_type = 'RAM')]
+        list_SSD = [component[0] for component in query.filter_by(component_type = 'SSD')]
+        list_GPU = [component[0] for component in query.filter_by(component_type = 'GPU')]
+        list_PC_Cooling = [component[0] for component in query.filter_by(component_type = 'PC Cooling')]
 
         query2 = db.session.query(Component)
         # componentes que no requieren compatibilidad
-        list_HDD = query2.filter_by(componentType = 'HDD').all()
-        list_CPU = query2.filter_by(componentType = 'CPU').all()
-        list_PSU = query2.filter_by(componentType = 'PSU').all()
-        list_Peripheral = query2.filter_by(componentType = 'Peripheral').all()
-
-        # TODO: separar los componentes por tipo (para imprimir por tipo en el simulator_motherboard.html) y los que no son ponerlos por tipo,
-        # pero qwue no son necesarios que tengan compatibilidad. Asimismo con los periféricos, pero puedas elegri varios tipos de periféricos
-        # con checkbox
-        # poner precio en c/u al imprimir al lado: Name:{{component.name}}-Price{{componente.price}}
+        list_HDD = query2.filter_by(component_type = 'HDD').all()
+        list_CPU = query2.filter_by(component_type = 'CPU').all()
+        list_PSU = query2.filter_by(component_type = 'PSU').all()
+        list_Peripheral = query2.filter_by(component_type = 'Peripheral').all()
 
     except Exception as e:
         error = True
@@ -250,7 +245,7 @@ def admin():
     else:
         return render_template('admin.html')
 
-@app.route("/admin/<action>")
+@app.route("/admin/<action>", methods=['POST', 'GET'])
 def admin_action(action):
     global actual_user
     if actual_user == '':
@@ -258,10 +253,10 @@ def admin_action(action):
     elif actual_user.role != 'admin':
         abort(401)
     elif action == "create":
-        ram_list = Component.query.filter(Component.componentType == 'RAM').all()
-        ssd_list = Component.query.filter(Component.componentType == 'SSD').all()
-        gpu_list = Component.query.filter(Component.componentType == 'GPU').all()
-        pc_cooling_list = Component.query.filter(Component.componentType == 'PC Cooling').all()
+        ram_list = Component.query.filter(Component.component_type == 'RAM').all()
+        ssd_list = Component.query.filter(Component.component_type == 'SSD').all()
+        gpu_list = Component.query.filter(Component.component_type == 'GPU').all()
+        pc_cooling_list = Component.query.filter(Component.component_type == 'PC Cooling').all()
         component_lists = ram_list + ssd_list + gpu_list + pc_cooling_list
         return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=component_lists)
     elif action == "update":
@@ -277,37 +272,42 @@ def admin_action(action):
 def create_motherboard():
     global actual_user
     response = {}
-    try:
-        motherboard_name = request.get_json()["motherboard_name"]
-        motherboard_description = request.get_json()["motherboard_description"]
-        motherboard_price = request.get_json()["motherboard_price"]
-        response['error'] = False
-        if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
-            response['invalid_register'] = "Motherboard with same name found in database. Try another name"
-        elif float(motherboard_price) <= 0:
-            response['invalid_register'] = "Motherboard price cannot be negative or zero"
-        elif motherboard_description == '':
-            response['invalid_register'] = "Description cannot be empty"
-        else:
-            response['invalid_register'] = False
-            motherboard = MotherBoard(
-                name=motherboard_name,
-                description=motherboard_description,
-                price=motherboard_price,
-                createBy = actual_user.username,
-                modifyBy = actual_user.username)
-            db.session.add(motherboard)
-            db.session.commit()
+    if actual_user == '':
+        abort(400)
+    elif actual_user.role != 'admin':
+        abort(400)
+    else:
+        try:
+            motherboard_name = request.get_json()["motherboard_name"]
+            motherboard_description = request.get_json()["motherboard_description"]
+            motherboard_price = request.get_json()["motherboard_price"]
+            response['error'] = False
+            if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+                response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+            elif float(motherboard_price) <= 0:
+                response['invalid_register'] = "Motherboard price cannot be negative or zero"
+            elif motherboard_description == '':
+                response['invalid_register'] = "Description cannot be empty"
+            else:
+                response['invalid_register'] = False
+                motherboard = MotherBoard(
+                    name=motherboard_name,
+                    description=motherboard_description,
+                    price=motherboard_price,
+                    create_by = actual_user.username,
+                    modify_by = actual_user.username)
+                db.session.add(motherboard)
+                db.session.commit()
 
-            response['child_name'] = motherboard_name
-            response['child_id'] = motherboard.id
-            
-    except Exception as e:
-        response['error'] = True
-        print(e)
-        db.session.rollback()
-    finally:
-        db.session.close()
+                response['child_name'] = motherboard_name
+                response['child_id'] = motherboard.id
+
+        except Exception as e:
+            response['error'] = True
+            print(e)
+            db.session.rollback()
+        finally:
+            db.session.close()
     
     return jsonify(response)
 
@@ -315,40 +315,45 @@ def create_motherboard():
 def create_component():
     global actual_user
     response = {}
-    try:
-        component_name = request.get_json()["component_name"]
-        component_description = request.get_json()["component_description"]
-        component_type = request.get_json()["component_type"]
-        component_price = request.get_json()["component_price"]
-        response['error'] = False
-        if component_name in [component.name for component in Component.query.all()]:
-            response['invalid_register'] = "Component with same name found in database. Try another name"
-        elif float(component_price) <= 0:
-            response['invalid_register'] = "Component price cannot be negative or zero"
-        elif component_description == '':
-            response['invalid_register'] = "Description cannot be empty"
-        elif component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
-            response['invalid_register'] = "Component type is not valid"
-        else:
-            response['invalid_register'] = False
-            component = Component(
-                name=component_name,
-                description=component_description,
-                price=component_price,
-                componentType=component_type,
-                createBy = actual_user.username,
-                modifyBy = actual_user.username)
-            db.session.add(component)
-            db.session.commit()
+    if actual_user == '':
+        abort(400)
+    elif actual_user.role != 'admin':
+        abort(400)
+    else:
+        try:
+            component_name = request.get_json()["component_name"]
+            component_description = request.get_json()["component_description"]
+            component_type = request.get_json()["component_type"]
+            component_price = request.get_json()["component_price"]
+            response['error'] = False
+            if component_name in [component.name for component in Component.query.all()]:
+                response['invalid_register'] = "Component with same name found in database. Try another name"
+            elif float(component_price) <= 0:
+                response['invalid_register'] = "Component price cannot be negative or zero"
+            elif component_description == '':
+                response['invalid_register'] = "Description cannot be empty"
+            elif component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
+                response['invalid_register'] = "Component type is not valid"
+            else:
+                response['invalid_register'] = False
+                component = Component(
+                    name=component_name,
+                    description=component_description,
+                    price=component_price,
+                    component_type=component_type,
+                    create_by = actual_user.username,
+                    modify_by = actual_user.username)
+                db.session.add(component)
+                db.session.commit()
 
-            response['child_name'] = component_name
-            response['child_id'] = component.id
-    except Exception as e:
-        response['error'] = True
-        print(e)
-        db.session.rollback()
-    finally:
-        db.session.close()
+                response['child_name'] = component_name
+                response['child_id'] = component.id
+        except Exception as e:
+            response['error'] = True
+            print(e)
+            db.session.rollback()
+        finally:
+            db.session.close()
     
     return jsonify(response)
 
@@ -370,7 +375,7 @@ def create_compatible():
             compatible = Compatible(
                 id_component=id_component,
                 id_motherboard=id_motherboard,
-                createBy = actual_user.username)
+                create_by = actual_user.username)
             db.session.add(compatible)
             db.session.commit()
     except Exception as e:
@@ -517,7 +522,7 @@ def update_motherboard():
             else:
                 # actualizacion se hace
                 query.dateModified = func.now()
-                query.modifyBy = actual_user.username
+                query.modify_by = actual_user.username
                 db.session.commit()
 
     except Exception as e:
@@ -569,7 +574,7 @@ def update_component():
                 if component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
                     response['invalid_register'] = "Component type is not valid"
                 else:
-                    query.componentType = component_type
+                    query.component_type = component_type
 
             if response['invalid_register']:
                 # actualizacion no se hace
@@ -577,7 +582,7 @@ def update_component():
             else:
                 # actualizacion se hace
                 query.dateModified = func.now()
-                query.modifyBy = actual_user.username
+                query.modify_by = actual_user.username
                 db.session.commit()
 
     except Exception as e:
