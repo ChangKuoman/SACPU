@@ -81,7 +81,5 @@ const item = elements[i];
                 document.getElementById('total_price').innerHTML = total_price;
             }
         }
-    }.catch(function() {
-        console.log('error simulator motherboard');
-    });
+    }
 }

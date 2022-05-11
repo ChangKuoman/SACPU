@@ -3,7 +3,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
     e.preventDefault();
     const id_motherboard = document.getElementById('id_motherboard').value;
     fetch('/admin/delete/motherboard', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({
             'id_motherboard': id_motherboard
         }),
@@ -53,7 +53,7 @@ document.getElementById('form_component').onsubmit = function(e) {
     e.preventDefault();
     const id_component = document.getElementById('id_component').value;
     fetch('/admin/delete/component', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({
             'id_component': id_component
         }),
@@ -103,7 +103,7 @@ document.getElementById('form_compatible').onsubmit = function(e) {
     e.preventDefault();
     const id_compatible = document.getElementById('id_compatible').value;
     fetch('/admin/delete/compatible', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({
             'id_compatible': id_compatible
         }),

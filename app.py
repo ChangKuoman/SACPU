@@ -383,7 +383,7 @@ def create_compatible():
     return jsonify(response)
 
 # delete routes
-@app.route("/admin/delete/motherboard", methods=['POST', 'GET'])
+@app.route("/admin/delete/motherboard", methods=['DELETE', 'GET'])
 def delete_motherboard():
     response = {}
     try:
@@ -415,7 +415,7 @@ def delete_motherboard():
     
     return jsonify(response)
 
-@app.route("/admin/delete/component", methods=['POST', 'GET'])
+@app.route("/admin/delete/component", methods=['DELETE', 'GET'])
 def delete_component():
     response = {}
     try:
@@ -447,7 +447,7 @@ def delete_component():
     
     return jsonify(response)
 
-@app.route("/admin/delete/compatible", methods=['POST', 'GET'])
+@app.route("/admin/delete/compatible", methods=['DELETE', 'GET'])
 def delete_compatible():
     response = {}
     try:
@@ -475,7 +475,7 @@ def delete_compatible():
     return jsonify(response)
 
 # update routes
-@app.route("/admin/update/motherboard", methods=['POST', 'GET'])
+@app.route("/admin/update/motherboard", methods=['PUT', 'GET'])
 def update_motherboard():
     global actual_user
     response = {}
@@ -529,7 +529,7 @@ def update_motherboard():
     
     return jsonify(response)
 
-@app.route("/admin/update/component", methods=['POST', 'GET'])
+@app.route("/admin/update/component", methods=['PUT', 'GET'])
 def update_component():
     global actual_user
     response = {}

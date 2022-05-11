@@ -8,7 +8,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
     const motherboard_description = document.getElementById('motherboard_description').value;
 
     fetch('/admin/update/motherboard', {
-        method: 'POST',
+        method: 'PUT',
         body: JSON.stringify({
             'motherboard_id': motherboard_id,
             'motherboard_name': motherboard_name,
@@ -63,7 +63,7 @@ document.getElementById('form_component').onsubmit = function(e) {
     const component_type = document.getElementById('component_type').value;
 
     fetch('/admin/update/component', {
-        method: 'POST',
+        method: 'PUT',
         body: JSON.stringify({
             'component_id': component_id,
             'component_name': component_name,
