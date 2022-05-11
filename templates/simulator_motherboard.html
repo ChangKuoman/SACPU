@@ -119,7 +119,7 @@
                     <ul class="no_dots">        
                     {% for psu in list_PSU%}
                         <li>
-                            <input type="radio" id={{psu.id}} name="psu" value={{psu.id}}/>
+                            <input type="radio" id={{psu.id}} name="psu" value={{psu.id}} data-price="{{psu.price}}" data-name="{{psu.name}}"/>
                             <label for={{psu.id}}>Name: {{psu.name}}</label>
                             <p class="description_list">Price: {{psu.price}}</p>
                             <p class="description_list">Description: {{psu.description}}</p>
@@ -162,7 +162,7 @@
     </body>
 
     <script>
-        // append child
+        // PARA PERIFERICOS
         const peripherals = document.getElementsByName('peripherals');
         for (i = 0; i < peripherals.length; i++){
             const peripheral = peripherals[i];
@@ -189,6 +189,46 @@
                     total_price =  document.getElementById('total_price').innerHTML;
                     total_price = (parseFloat(total_price) - parseFloat(price)).toFixed(2);
                     document.getElementById('total_price').innerHTML = total_price;
+                }
+            }
+        }
+
+        // PARA PSU 
+        const psu_list = document.getElementsByName('psu');
+        for (i = 0; i < psu_list.length; i++){
+            const psu = psu_list[i];
+
+            psu.onchange = function(e){
+        //    console.log(e.target);
+
+                const change = e.target.checked;
+                const name = e.target.dataset['name'];
+                const price = e.target.dataset['price'];
+                if (change === true){
+                    // append child
+                    let li = document.createElement('li');
+                    li.setAttribute('name', name);
+                    li.innerHTML = String(name) + " " + String(price);
+                    document.getElementById('shopping_items').appendChild(li);
+                    // anadir de precio
+                    total_price =  document.getElementById('total_price').innerHTML;
+                    total_price = (parseFloat(total_price) + parseFloat(price)).toFixed(2);
+                    document.getElementById('total_price').innerHTML = total_price;
+                }
+
+                // after this iterate again and chase the one has changed
+                for (i = 0; i<psu_list.length; i++){
+                    const psu2 = psu_list[i];
+                    const list = document.getElementsByName(psu2.dataset.name);
+                    if (list.length > 0 && psu2.checked === false){
+                        const price = psu2.dataset.price;
+                        // remove child
+                        document.getElementById('shopping_items').removeChild(list[0]);
+                        // quitar de precio
+                        total_price =  document.getElementById('total_price').innerHTML;
+                        total_price = (parseFloat(total_price) - parseFloat(price)).toFixed(2);
+                        document.getElementById('total_price').innerHTML = total_price;
+                    }
                 }
             }
         }
