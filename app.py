@@ -184,7 +184,6 @@ def simulator_motherboard(motherboard):
         query = db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard==int(motherboard))
         # componentes compatibles con el id de la motherboard (RAM, SSD, GPU, PC Cooling)
         list_RAM = [component[0] for component in query.filter_by(componentType = 'RAM')]
-        print(list_RAM)
         list_SSD = [component[0] for component in query.filter_by(componentType = 'SSD')]
         list_GPU = [component[0] for component in query.filter_by(componentType = 'GPU')]
         list_PC_Cooling = [component[0] for component in query.filter_by(componentType = 'PC Cooling')]
@@ -259,14 +258,11 @@ def admin_action(action):
     elif actual_user.role != 'admin':
         abort(401)
     elif action == "create":
-        print(Component.query.all())
         return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     elif action == "update":
         return render_template("admin_update.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     elif action == "delete":
         componentTuples= db.session.query(Compatible, MotherBoard, Component).filter(Compatible.id_motherboard==MotherBoard.id).filter(Compatible.id_component==Component.id).all()
-        for i in componentTuples:
-            print(i)
         return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all(), compatibles=componentTuples)
     else:
         abort(404)
@@ -300,7 +296,6 @@ def create_motherboard():
 
             response['child_name'] = motherboard_name
             response['child_id'] = motherboard.id
-            print(motherboard.id)
             
     except Exception as e:
         response['error'] = True
@@ -343,7 +338,6 @@ def create_component():
 
             response['child_name'] = component_name
             response['child_id'] = component.id
-            print(component.id)
     except Exception as e:
         response['error'] = True
         print(e)
@@ -397,7 +391,6 @@ def delete_motherboard():
         db.session.commit()
         
         query2 = MotherBoard.query.filter_by(id=id_motherboard)
-        print(query2.all())
 
         if query2.all() == []:
             response['invalid_register'] = "There is no motherboard in database"
@@ -430,7 +423,6 @@ def delete_component():
         db.session.commit()
 
         query2 = Component.query.filter_by(id=id_component)
-        print(query2.all())
 
         if query2.all() == []:
             response['invalid_register'] = "There is no component in database"
@@ -456,11 +448,9 @@ def delete_compatible():
     try:
         id_compatible = request.get_json()["id_compatible"]
         id_motherboard, id_component = id_compatible.split()
-        print(id_motherboard, "-", id_component)
 
         response['error'] = False
         query = Compatible.query.filter(Compatible.id_motherboard==id_motherboard).filter(Compatible.id_component==id_component)
-        print(query.all())
 
         if query.all() == []:
             response['invalid_register'] = "There is no compatible in database"
@@ -518,7 +508,6 @@ def update_motherboard():
 
             if response['invalid_register']:
                 # actualizacion no se hace
-                print("actualizacion NO hecha")
                 db.session.rollback()
             else:
                 # actualizacion se hace
@@ -579,7 +568,6 @@ def update_component():
 
             if response['invalid_register']:
                 # actualizacion no se hace
-                print("actualizacion NO hecha")
                 db.session.rollback()
             else:
                 # actualizacion se hace
