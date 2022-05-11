@@ -258,7 +258,12 @@ def admin_action(action):
     elif actual_user.role != 'admin':
         abort(401)
     elif action == "create":
-        return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
+        ram_list = Component.query.filter(Component.componentType == 'RAM').all()
+        ssd_list = Component.query.filter(Component.componentType == 'SSD').all()
+        gpu_list = Component.query.filter(Component.componentType == 'GPU').all()
+        pc_cooling_list = Component.query.filter(Component.componentType == 'PC Cooling').all()
+        component_lists = ram_list + ssd_list + gpu_list + pc_cooling_list
+        return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=component_lists)
     elif action == "update":
         return render_template("admin_update.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
     elif action == "delete":
