@@ -1,7 +1,6 @@
 document.getElementById('form').onsubmit = function(e) {
     e.preventDefault();
     var ele = document.getElementsByName('motherboard');
-    console.log(ele);
     for(i = 0; i < ele.length; i++) {
         if(ele[i].checked){
             fetch('/simulator/motherboard', {
@@ -26,7 +25,7 @@ document.getElementById('form').onsubmit = function(e) {
                 }
 
             }).catch(function() {
-                console.log('error_choose_motherboard')
+                console.log('error simulator');
             });
             break;
         }

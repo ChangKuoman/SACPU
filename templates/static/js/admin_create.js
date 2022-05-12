@@ -17,7 +17,6 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -42,7 +41,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin create motherboard');
     });
 }
 // function for on change error
@@ -71,7 +70,6 @@ document.getElementById('form_component').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -96,7 +94,7 @@ document.getElementById('form_component').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin create component');
     });
 }
 // function for on change error
@@ -121,7 +119,6 @@ document.getElementById('form_compatible').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -139,7 +136,7 @@ document.getElementById('form_compatible').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin create compatible')
     });
 }
 // function for on change error
