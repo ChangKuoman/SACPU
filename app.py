@@ -13,6 +13,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import func, ForeignKey
 
+from flask_login import (
+    UserMixin,
+    login_user,
+    LoginManager,
+    login_required,
+    logout_user,
+    current_user
+)
+from flask_bcrypt import Bcrypt
+
+# constants
 anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
 chang_static_path = "/home/chang/Escritorio/SACPU/templates/static"
 
@@ -23,14 +34,22 @@ chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
 app = Flask(__name__, static_folder=chang_static_path)
 app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'papasfritas15'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+bcrypt = Bcrypt(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 
 # models
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'userinfo'
-    username = db.Column(db.String(), primary_key=True)
-    password = db.Column(db.String(), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), primary_key=True, unique=True)
+    password = db.Column(db.String(80), nullable=False)
     role = db.Column(db.String(), nullable=False, default="user")
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
 
@@ -44,9 +63,9 @@ class MotherBoard(db.Model):
     name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
     date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modify_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
 
     def __repr__(self):
         return f'motherboard: {self.name}'
@@ -59,19 +78,19 @@ class Component(db.Model):
     component_type = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
     date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modify_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
 
     def __repr__(self):
         return f'component: {self.name}'
 
 class Compatible(db.Model):
     __tablename__ = 'compatible'
-    id_motherboard = db.Column(db.String(), ForeignKey('motherboard.id'), primary_key=True)
+    id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
     id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.String(), ForeignKey('userinfo.username'), nullable=False, default="chang")
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
 
@@ -88,13 +107,25 @@ def check_password_difficulty(password_to_check):
     minusc_amount = len([i for i in password_to_check if i.islower()])
     digit_amount = len([i for i in password_to_check if i.isdigit()])
     special_amount = len([i for i in password_to_check if i in "!#$%&()=+-."])
-    password_length = True if len(password_to_check) >= 6 else False
+    password_length = True if len(password_to_check) >= 6 and len(password_to_check) <= 20 else False
     if mayusc_amount and minusc_amount and digit_amount and special_amount and password_length:
         return True
     else:
         return False
 
 # controllers
+
+# login manager
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
 
 # home
 @app.route('/', methods=['POST', 'GET'])
@@ -104,7 +135,8 @@ def index():
 # login
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    return render_template('login.html')
+    return render_template('login.html') 
+
 
 @app.route('/login/enter', methods=['POST', 'GET'])
 def login_enter():
@@ -115,20 +147,22 @@ def login_enter():
         user = User.query.filter_by(username=username).first()
         response['error'] = False
         if user == None:
+            # user does not exists
             response['invalid_login'] = True
-        elif user.password != password:
-            response['invalid_login'] = True
-        else:
+        elif bcrypt.check_password_hash(user.password, password):
+            # correct login     
+            login_user(user)
             response['invalid_login'] = False
-            global actual_user
-            actual_user = user
+        else:
+            # incorrect login
+            response['invalid_login'] = True
     except Exception as e:
         response['error'] = True
         print(e)
         db.session.rollback()
     finally:
-        db.session.close()
-
+        db.session.close()          
+    
     return jsonify(response)
 
 # register
@@ -146,16 +180,18 @@ def register_create():
         response['error'] = False
         if username in [user.username for user in User.query.all()]:
             response['invalid_register'] = "Username already exists. Try another one"
-        elif not len(username) >= 4:
-            response['invalid_register'] = "Username must be 4 or more characters"
+        elif len(username) > 20 or len(username) < 4:
+            response['invalid_register'] = "Username must be 4 to 20 characters"
         elif password != password_check:
             response['invalid_register'] = "Passwords do not match"
         elif not check_password_difficulty(password):
-            response['invalid_register'] = "This is an unsafe password. Password must contain 1 upper, 1 lower, 1 digit, 1 especial character and a minimun length of 6."
+            response['invalid_register'] = "This is an unsafe password. Password must contain 1 upper, 1 lower, 1 digit, 1 especial character and 6 to 20 characters."
         else:
+            # valid register
             response['invalid_register'] = False
-            user = User(username=username, password=password)
-            db.session.add(user)
+            hashed_password = bcrypt.generate_password_hash(password)
+            new_user = User(username=username, password=hashed_password)
+            db.session.add(new_user)
             db.session.commit()
     except Exception as e:
         response['error'] = True
@@ -168,17 +204,15 @@ def register_create():
 
 # simulator home
 @app.route('/simulator', methods=['POST', 'GET'])
+@login_required
 def simulator():
-    global actual_user
-    if actual_user != '':
-        return render_template('simulator.html', motherboards=MotherBoard.query.all())
-    else:
-        abort(401)
+    return render_template('simulator.html', motherboards=MotherBoard.query.all())
+
 
 # simulator motherboard
 @app.route('/simulator/<motherboard>', methods=['POST', 'GET'])
+@login_required
 def simulator_motherboard(motherboard):
-    global actual_user
     error = False
     try:
         query = db.session.query(Component, Compatible).filter(Component.id == Compatible.id_component).filter(Compatible.id_motherboard==int(motherboard))
@@ -201,8 +235,6 @@ def simulator_motherboard(motherboard):
     finally:
         pass
     
-    if actual_user == '':
-        abort(401)
     if error:
         abort(400)
     else:
@@ -218,6 +250,7 @@ def simulator_motherboard(motherboard):
             list_Peripheral=list_Peripheral)
 
 @app.route('/simulator/motherboard', methods=['POST', 'GET'])
+@login_required
 def simulator_choose_motherboard():
     response = {}
     try:
@@ -235,22 +268,18 @@ def simulator_choose_motherboard():
 
 # vista admin
 @app.route('/admin', methods=['POST', 'GET'])
+@login_required
 def admin():
     # TODO: hacer que /simulator tenga un botòn que rediriga aquì (html)
-    global actual_user
-    if actual_user == '':
-        abort(401)
-    elif actual_user.role != 'admin':
+    if current_user.role != 'admin':
         abort(401)
     else:
         return render_template('admin.html')
 
 @app.route("/admin/<action>", methods=['POST', 'GET'])
+@login_required
 def admin_action(action):
-    global actual_user
-    if actual_user == '':
-        abort(401)
-    elif actual_user.role != 'admin':
+    if current_user.role != 'admin':
         abort(401)
     elif action == "create":
         ram_list = Component.query.filter(Component.component_type == 'RAM').all()
@@ -269,12 +298,10 @@ def admin_action(action):
 
 # create routes
 @app.route("/admin/create/motherboard", methods=['POST', 'GET'])
+@login_required
 def create_motherboard():
-    global actual_user
     response = {}
-    if actual_user == '':
-        abort(400)
-    elif actual_user.role != 'admin':
+    if current_user.role != 'admin':
         abort(400)
     else:
         try:
@@ -312,12 +339,10 @@ def create_motherboard():
     return jsonify(response)
 
 @app.route("/admin/create/component", methods=['POST', 'GET'])
+@login_required
 def create_component():
-    global actual_user
     response = {}
-    if actual_user == '':
-        abort(400)
-    elif actual_user.role != 'admin':
+    if current_user.role != 'admin':
         abort(400)
     else:
         try:
@@ -358,8 +383,8 @@ def create_component():
     return jsonify(response)
 
 @app.route("/admin/create/compatible", methods=['POST', 'GET'])
+@login_required
 def create_compatible():
-    global actual_user
     response = {}
     try:
         id_motherboard = request.get_json()["id_motherboard"]
@@ -389,6 +414,7 @@ def create_compatible():
 
 # delete routes
 @app.route("/admin/delete/motherboard", methods=['DELETE', 'GET'])
+@login_required
 def delete_motherboard():
     response = {}
     try:
@@ -421,6 +447,7 @@ def delete_motherboard():
     return jsonify(response)
 
 @app.route("/admin/delete/component", methods=['DELETE', 'GET'])
+@login_required
 def delete_component():
     response = {}
     try:
@@ -442,7 +469,6 @@ def delete_component():
             query2.delete()
             db.session.commit()
 
-
     except Exception as e:
         response['error'] = True
         print(e)
@@ -453,6 +479,7 @@ def delete_component():
     return jsonify(response)
 
 @app.route("/admin/delete/compatible", methods=['DELETE', 'GET'])
+@login_required
 def delete_compatible():
     response = {}
     try:
@@ -481,8 +508,8 @@ def delete_compatible():
 
 # update routes
 @app.route("/admin/update/motherboard", methods=['PUT', 'GET'])
+@login_required
 def update_motherboard():
-    global actual_user
     response = {}
     try:
         motherboard_id = request.get_json()["motherboard_id"]
@@ -535,8 +562,8 @@ def update_motherboard():
     return jsonify(response)
 
 @app.route("/admin/update/component", methods=['PUT', 'GET'])
+@login_required
 def update_component():
-    global actual_user
     response = {}
     try:
         component_id = request.get_json()["component_id"]
@@ -596,6 +623,7 @@ def update_component():
 
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
+@login_required
 def redirect_errors(error):
     if int(error) == 500:
         abort(500)
