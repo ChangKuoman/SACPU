@@ -4,32 +4,55 @@
             SACPU - Simulador de Armado de CPU
         </title>
         <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
-        <link rel="stylesheet" href="static/css/style.css">
+        <link rel="stylesheet" href="/static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
     </head>
 
     <body class="fondo">
         <header class="header">
-            <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
-            <h1>
-                BIENVENIDO, PRIMERO SELECCIONA UNA TARJETA MADRE
-            </h1>
+            <a class="a_icono" href="/" target="_self">
+                <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            </a>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - Simulador de Armado de CPU
+                </h1>
+            </a>
         </header>
-        <div class="text-simulator">
-            <p>TARJETA MADRE</p>
-            <form id="form" name="form">
-                <ul class="no_dots">
+        <div class="contenedor_simulador">
+            <div class="contenedor_left">
                 
-                {% for motherboard in motherboards %}
-                    <li>
-                        <input type="radio" id={{motherboard.id}} name="motherboard" value={{motherboard.id}}/>
-                        <label for={{motherboard.id}}>{{motherboard.name}}</label>
-                        <p class="description_list">Description: {{motherboard.description}}</p>
-                        <p class="description_list">Price: {{motherboard.price}}</p>
-                    </li>
-                {% endfor %}
+            </div>
+            <div class="contenedor_center">
+                <div class="Enunciado">
+                    <h1>
+                        WELCOME TO THE SIMULATOR, FIRST SELECT A MOTHERBOARD
+                    </h1>
+                </div>
+                <div class="text_simulator">
+                    <p class="titulos">CHOOSE A MOTHERBOARD:</p>
+                    <form id="form" name="form" class="text_simulator_part1">
+                        <ul class="no_dots">
+                        {% for motherboard in motherboards %}
+                            <li>
+                                <input type="radio" id={{motherboard.id}} name="motherboard" value={{motherboard.id}}/>
+                                <label for={{motherboard.id}}>{{motherboard.name}}</label>
+                                <div class="descripcion_producto">
+                                    <p class="description_list">Description: {{motherboard.description}}</p>
+                                    <p class="description_list">Price: {{motherboard.price}}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                        <div class="Cajon_pedido">
+                            <input type="submit" value="CHOOSE ↪" class="boton_submit"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="contenedor_right">
 
-                <input type="submit" value="Submit"/>
-            </form>
+            </div>
         </div>
     </body>
     <!--script must be here-->
