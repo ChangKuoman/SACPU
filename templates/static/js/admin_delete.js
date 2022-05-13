@@ -3,7 +3,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
     e.preventDefault();
     const id_motherboard = document.getElementById('id_motherboard').value;
     fetch('/admin/delete/motherboard', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({
             'id_motherboard': id_motherboard
         }),
@@ -13,7 +13,6 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -25,8 +24,6 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
             document.getElementById('form_motherboard').reset();
 
             // eliminate from motherboard form
-            console.log(document.getElementById('id_motherboard').hasChildNodes());
-            console.log(document.getElementById(jsonResponse['child_id']));
             document.getElementById('id_motherboard').removeChild(document.getElementById(jsonResponse['child_id']));
 
             // eliminate from compatible form
@@ -43,7 +40,7 @@ document.getElementById('form_motherboard').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin delete motherboard');
     });
 }
 // function for on change error
@@ -56,7 +53,7 @@ document.getElementById('form_component').onsubmit = function(e) {
     e.preventDefault();
     const id_component = document.getElementById('id_component').value;
     fetch('/admin/delete/component', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({
             'id_component': id_component
         }),
@@ -66,7 +63,6 @@ document.getElementById('form_component').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -78,8 +74,6 @@ document.getElementById('form_component').onsubmit = function(e) {
             document.getElementById('form_component').reset();
 
             // eliminate from component form
-            console.log(document.getElementById('id_component').hasChildNodes());
-            console.log(document.getElementById(jsonResponse['child_id']));
             document.getElementById('id_component').removeChild(document.getElementById(jsonResponse['child_id']));
 
             // eliminate from compatible form
@@ -96,7 +90,7 @@ document.getElementById('form_component').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin delete component');
     });
 }
 // function for on change error
@@ -109,7 +103,7 @@ document.getElementById('form_compatible').onsubmit = function(e) {
     e.preventDefault();
     const id_compatible = document.getElementById('id_compatible').value;
     fetch('/admin/delete/compatible', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({
             'id_compatible': id_compatible
         }),
@@ -119,7 +113,6 @@ document.getElementById('form_compatible').onsubmit = function(e) {
     }).then(
         response => response.json()
     ).then(function(jsonResponse){
-        console.log(jsonResponse);
         
         if (jsonResponse['error']){
             // when is an error
@@ -131,8 +124,6 @@ document.getElementById('form_compatible').onsubmit = function(e) {
             document.getElementById('form_compatible').reset();
 
             // eliminate from compatible form
-            console.log(document.getElementById('id_compatible').hasChildNodes());
-            console.log(document.getElementById(jsonResponse['child_id']));
             document.getElementById('id_compatible').removeChild(document.getElementById(jsonResponse['child_id']));
 
         }
@@ -143,7 +134,7 @@ document.getElementById('form_compatible').onsubmit = function(e) {
         }
         
     }).catch(function() {
-        console.log('error_register')
+        console.log('error admin delete compatible')
     });
 }
 // function for on change error
