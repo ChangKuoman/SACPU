@@ -619,6 +619,53 @@ def update_component():
     
     return jsonify(response)
 
+# buy
+@app.route('/simulator/buy', methods=['POST', 'GET'])
+@login_required
+def simulator_buy():
+    response = {'error': False}
+    try:
+        m1 = request.form.get('motherboard', '')
+        print(m1)
+        motherboard = request.get_json()['motherboard']
+        print('motherboard', motherboard)
+        
+        psu = request.get_json()['psu']
+        print('psu', psu)
+
+        cpu = request.get_json()['cpu']
+        print('cpu', cpu)
+
+        hdd = request.get_json()['hdd']
+        print('hdd', hdd)
+
+        ram = request.get_json()['ram']
+        print('ram', ram)
+
+        ssd = request.get_json()['ssd']
+        print('ssd', ssd)
+
+        gpu = request.get_json()['gpu']
+        print('gpu', gpu)
+
+        pc_cooling = request.get_json()['pc_cooling']
+        print('pc_cooling', pc_cooling)
+
+        peripherals = request.get_json()['peripherals']
+        print('peripherals', peripherals)
+
+
+
+    except Exception as e:
+        response['error'] = True
+        db.session.rollback()
+        print(e)
+    finally:
+        db.session.close()
+
+
+    return jsonify(response)
+
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])
 @login_required
