@@ -48,7 +48,7 @@ login_manager.login_view = 'login'
 class User(db.Model, UserMixin):
     __tablename__ = 'userinfo'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), primary_key=True, unique=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     role = db.Column(db.String(), nullable=False, default="user")
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
@@ -58,7 +58,7 @@ class User(db.Model, UserMixin):
 
 class MotherBoard(db.Model):
     __tablename__ = 'motherboard'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True)
     price = db.Column(db.Float, nullable=False)
     name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
