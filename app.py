@@ -146,10 +146,11 @@ def login_enter():
         password = request.get_json()['password']
         user = User.query.filter_by(username=username).first()
         response['error'] = False
+
         if user == None:
             # user does not exists
             response['invalid_login'] = True
-        elif bcrypt.check_password_hash(user.password, password):
+        elif user.password == password:
             # correct login     
             login_user(user)
             response['invalid_login'] = False
@@ -189,8 +190,7 @@ def register_create():
         else:
             # valid register
             response['invalid_register'] = False
-            hashed_password = bcrypt.generate_password_hash(password)
-            new_user = User(username=username, password=hashed_password)
+            new_user = User(username=username, password=password)
             db.session.add(new_user)
             db.session.commit()
     except Exception as e:
