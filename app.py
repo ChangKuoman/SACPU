@@ -21,7 +21,6 @@ from flask_login import (
     logout_user,
     current_user
 )
-from flask_bcrypt import Bcrypt
 
 # constants
 anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
@@ -37,7 +36,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'papasfritas15'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-bcrypt = Bcrypt(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
