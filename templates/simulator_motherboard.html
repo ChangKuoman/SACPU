@@ -4,160 +4,205 @@
             SACPU - Simulador de Armado de CPU
         </title>
         <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
-        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="/static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
     </head>
 
     <body class="fondo">
-        <div class="boton_div">
-            <a href="/simulator" target="_self">
-                REGRESAR
-            </a>
-        </div>
-
         <header class="header">
-            <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
-            <h1>
-                AHORA, SELECCIONE LOS COMPONENTES
-            </h1>
+            <a class="a_icono" href="/" target="_self">
+                <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            </a>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - Simulador de Armado de CPU
+                </h1>
+            </a>
         </header>
-        <div>
-            <h2>YOUR MOTHERBOARD: {{motherboard.name}}</h2>
-            <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
-        </div>
+        <div class="contenedor_simulador">
 
-        <div>
-            <form id="form" name="form">
-                <h1>COMPONENTS THAT NEED COMPATIBILITY</h1>
+            <div class="contenedor_left">
+                
+                <a class="boton_regresar" href="/simulator" target="_self">
+                     ↩ BACK
+                </a>
 
-                <div>
-                    <h2>RAM</h2>
-                    <ul class="no_dots">        
-                    {% for ram in list_RAM%}
-                        <li>
-                            <input type="radio" id={{ram.id}} name="ram" value={{ram.id}} data-price="{{ram.price}}" data-name="{{ram.name}}"/>
-                            <label for={{ram.id}}>Name: {{ram.name}}</label>
-                            <p class="description_list">Price: {{ram.price}}</p>
-                            <p class="description_list">Description: {{ram.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-
-                <div>
-                    <h2>SSD</h2>
-                    <ul class="no_dots">        
-                    {% for ssd in list_SSD%}
-                        <li>
-                            <input type="radio" id={{ssd.id}} name="ssd" value={{ssd.id}} data-price="{{ssd.price}}" data-name="{{ssd.name}}"/>
-                            <label for={{ssd.id}}>Name: {{ssd.name}}</label>
-                            <p class="description_list">Price: {{ssd.price}}</p>
-                            <p class="description_list">Description: {{ssd.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-
-                <div>
-                    <h2>GPU</h2>
-                    <ul class="no_dots">        
-                    {% for gpu in list_GPU%}
-                        <li>
-                            <input type="radio" id={{gpu.id}} name="gpu" value={{gpu.id}} data-price="{{gpu.price}}" data-name="{{gpu.name}}"/>
-                            <label for={{gpu.id}}>Name: {{gpu.name}}</label>
-                            <p class="description_list">Price: {{gpu.price}}</p>
-                            <p class="description_list">Description: {{gpu.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-
-                <div>
-                    <h2>PC Cooling</h2>
-                    <ul class="no_dots">        
-                    {% for pc_cooling in list_PC_Cooling%}
-                        <li>
-                            <input type="radio" id={{pc_cooling.id}} name="pc_cooling" value={{pc_cooling.id}} data-price="{{pc_cooling.price}}" data-name="{{pc_cooling.name}}"/>
-                            <label for={{pc_cooling.id}}>Name: {{pc_cooling.name}}</label>
-                            <p class="description_list">Price: {{pc_cooling.price}}</p>
-                            <p class="description_list">Description: {{pc_cooling.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
+            </div>
+            
+            <div class="contenedor_center">
+                <div class="Enunciado">
+                    <h1>
+                        NOW, CHOOSE THE COMPONENTS
+                    </h1>
                 </div>
                 
-                <h1>COMPONENTS THAT DO NOT NEED COMPATIBILITY</h1>
-                <div>
-                    <h2>HDD</h2>
-                    <ul class="no_dots">        
-                    {% for hdd in list_HDD%}
-                        <li>
-                            <input type="radio" id={{hdd.id}} name="hdd" value={{hdd.id}} data-price="{{hdd.price}}" data-name="{{hdd.name}}"/>
-                            <label for={{hdd.id}}>Name: {{hdd.name}}</label>
-                            <p class="description_list">Price: {{hdd.price}}</p>
-                            <p class="description_list">Description: {{hdd.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
+                <div class="text_simulator">
+                    <div>
+                        <h2 class="titulos">YOUR MOTHERBOARD: {{motherboard.name}}</h2>
+                        <div class="descripcion_producto">
+                            <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
+                        </div>
+                    </div>
+            
+                    <form id="form" name="form" class="text_simulator_part2">
+                        <h1 class="titulos_2">
+                            COMPONENTS THAT NEED COMPATIBILITY: 
+                        </h1>
+                        
+                        <div>
+                            <h2 class="titulos_3">RAM</h2>
+                            <ul class="no_dots">        
+                            {% for ram in list_RAM%}
+                                <li>
+                                    <input type="radio" id={{ram.id}} name="ram" value={{ram.id}} data-price="{{ram.price}}" data-name="{{ram.name}}"/>
+                                    <label for={{ram.id}}>Name: {{ram.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{ram.price}}</p>
+                                        <p class="description_list">Description: {{ram.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        
+        
+                        <div>
+                            <h2 class="titulos_3">SSD</h2>
+                            <ul class="no_dots">        
+                            {% for ssd in list_SSD%}
+                                <li>
+                                    <input type="radio" id={{ssd.id}} name="ssd" value={{ssd.id}} data-price="{{ssd.price}}" data-name="{{ssd.name}}"/>
+                                    <label for={{ssd.id}}>Name: {{ssd.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{ssd.price}}</p>
+                                        <p class="description_list">Description: {{ssd.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+        
+                        <div>
+                            <h2 class="titulos_3">GPU</h2>
+                            <ul class="no_dots">        
+                            {% for gpu in list_GPU%}
+                                <li>
+                                    <input type="radio" id={{gpu.id}} name="gpu" value={{gpu.id}} data-price="{{gpu.price}}" data-name="{{gpu.name}}"/>
+                                    <label for={{gpu.id}}>Name: {{gpu.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{gpu.price}}</p>
+                                        <p class="description_list">Description: {{gpu.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+        
+                        <div>
+                            <h2 class="titulos_3">PC Cooling</h2>
+                            <ul class="no_dots">        
+                            {% for pc_cooling in list_PC_Cooling%}
+                                <li>
+                                    <input type="radio" id={{pc_cooling.id}} name="pc_cooling" value={{pc_cooling.id}} data-price="{{pc_cooling.price}}" data-name="{{pc_cooling.name}}"/>
+                                    <label for={{pc_cooling.id}}>Name: {{pc_cooling.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{pc_cooling.price}}</p>
+                                        <p class="description_list">Description: {{pc_cooling.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <h1 class="titulos_2">COMPONENTS THAT DO NOT NEED COMPATIBILITY: </h1>
+                        <div>
+                            <h2 class="titulos_3">HDD</h2>
+                            <ul class="no_dots">        
+                            {% for hdd in list_HDD%}
+                                <li>
+                                    <input type="radio" id={{hdd.id}} name="hdd" value={{hdd.id}} data-price="{{hdd.price}}" data-name="{{hdd.name}}"/>
+                                    <label for={{hdd.id}}>Name: {{hdd.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{hdd.price}}</p>
+                                        <p class="description_list">Description: {{hdd.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+        
+                        <div>
+                            <h2 class="titulos_3">CPU</h2>
+                            <ul class="no_dots">        
+                            {% for cpu in list_CPU%}
+                                <li>
+                                    <input type="radio" id={{cpu.id}} name="cpu" value={{cpu.id}} data-price="{{cpu.price}}" data-name="{{cpu.name}}"/>
+                                    <label for={{cpu.id}}>Name: {{cpu.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{cpu.price}}</p>
+                                        <p class="description_list">Description: {{cpu.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+        
+                        <div>
+                            <h2 class="titulos_3">PSU</h2>
+                            <ul class="no_dots">        
+                            {% for psu in list_PSU%}
+                                <li>
+                                    <input type="radio" id={{psu.id}} name="psu" value={{psu.id}} data-price="{{psu.price}}" data-name="{{psu.name}}"/>
+                                    <label for={{psu.id}}>Name: {{psu.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{psu.price}}</p>
+                                        <p class="description_list">Description: {{psu.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+        
+                        <h1>PERIPHERALS</h1>
+        
+                        <div>
+                            <h2 class="titulos_3">Peripheral</h2>
+                            <ul class="no_dots" id="peripheral">        
+                            {% for peripheral in list_Peripheral%}
+                                <li>
+                                    <input type="checkbox" name="peripherals" data-price="{{peripheral.price}}" data-name="{{peripheral.name}}" id="{{peripheral.id}}"/>
+                                    <label for={{peripheral}}>Name: {{peripheral.name}}</label>
+                                    <div class="descripcion_producto">
+                                        <p class="description_list">Price: {{peripheral.price}}</p>
+                                        <p class="description_list">Description: {{peripheral.description}}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
-                <div>
-                    <h2>CPU</h2>
-                    <ul class="no_dots">        
-                    {% for cpu in list_CPU%}
-                        <li>
-                            <input type="radio" id={{cpu.id}} name="cpu" value={{cpu.id}} data-price="{{cpu.price}}" data-name="{{cpu.name}}"/>
-                            <label for={{cpu.id}}>Name: {{cpu.name}}</label>
-                            <p class="description_list">Price: {{cpu.price}}</p>
-                            <p class="description_list">Description: {{cpu.description}}</p>
-                        </li>
-                    {% endfor %}
+            <div class="contenedor_right">
+                <div class="caja_compra">
+                    <div class="header">
+                        <h2>SHOPPING CART</h2>
+                        <img class="icono_carrito" src="/static/img/carrito_de_compras.png" alt="Icono">
+                    </div>
+                    <p class="titulos_4">MotherBoard Price: {{motherboard.price}}</p>
+                    <ul class="orden_producto" id="shopping_items">
+                        <b>{{motherboard.name}} {{motherboard.price}}</b>
                     </ul>
+
+                    <div class="total_compra">
+                        <p> TOTAL: S/.  </p>
+                        <p id="total_price">{{motherboard.price}}</p>
+                    </div>
+                    <input class="boton_comprar" type="submit" value="BUY"/>
                 </div>
-
-                <div>
-                    <h2>PSU</h2>
-                    <ul class="no_dots">        
-                    {% for psu in list_PSU%}
-                        <li>
-                            <input type="radio" id={{psu.id}} name="psu" value={{psu.id}} data-price="{{psu.price}}" data-name="{{psu.name}}"/>
-                            <label for={{psu.id}}>Name: {{psu.name}}</label>
-                            <p class="description_list">Price: {{psu.price}}</p>
-                            <p class="description_list">Description: {{psu.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-
-                <h1>PERIPHERALS</h1>
-
-                <div>
-                    <h2>Peripheral</h2>
-                    <ul class="no_dots" id="peripheral">        
-                    {% for peripheral in list_Peripheral%}
-                        <li>
-                            <input type="checkbox" name="peripherals" data-price="{{peripheral.price}}" data-name="{{peripheral.name}}" id="{{peripheral.id}}"/>
-                            <p>Name: {{peripheral.name}}</p>
-                            <p class="description_list">Price: {{peripheral.price}}</p>
-                            <p class="description_list">Description: {{peripheral.description}}</p>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-
-                <input type="submit" value="Submit"/>
-            </form>
+            </div>
         </div>
-
-        <!--PARA LA COMPRA/PONER AL LADO-->
-        <div>
-            <h2>SHOPPING CART</h2>
-            <ul class="no_dots" id="shopping_items">
-
-            </ul>
-            <p>TOTAL: S/.</p>
-            <p id="total_price">{{motherboard.price}}</p>
-        </div>
-
         <!--['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']-->
     </body>
 

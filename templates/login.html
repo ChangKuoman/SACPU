@@ -4,24 +4,41 @@
             SACPU - Iniciar Sesión
         </title>
         <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
-        <link rel="stylesheet" href="static/css/style.css">
-        
+        <link rel="stylesheet" href="static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
     </head>
     <body class="fondo">
-        <div>
-            <form id="form">
-                <input type="text" id="username" name="username"/>
-                <input type="password" id="password" name="password"/>
-                <input type="submit" value="Create"/>
-            </form>
-        </div>
-
-        <div id="error" class="hidden">
-            <p class="error_text">
-                Username is not valid or password is wrong
-            </p>
+        <header class="header">
+            <a class="a_icono" href="/" target="_self">
+                <img class="icono" src="static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            </a>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - Simulador de Armado de CPU
+                </h1>
+            </a>
+        </header>
+        <div class="contenedor">
+            <div>
+                <form id="form" class="form_div">
+                    <p>USERNAME</p>
+                    <input type="text" id="username" name="username"/>
+                    <p>PASSWORD</p>
+                    <input type="password" id="password" name="password"/>
+                    <input class="boton_submit" type="submit" value="LOGIN"/>
+                </form>
+            </div>
+    
+            <div id="error" class="hidden">
+                <p class="error_text">
+                    Username is not valid or password is wrong
+                </p>
+            </div>
         </div>
     </body>
+    <footer>
+
+    </footer>
     <!--script must be here-->
     <script src="static/js/login.js"></script>
 </html>

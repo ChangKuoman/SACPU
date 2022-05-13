@@ -4,65 +4,95 @@
             SACPU - Admin
         </title>
         <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
-        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="/static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
     </head>
 
-    <body>
-        <p>WHEN DELETING A MOTHERBOARD OR COMPONENT IT ALSO DELETES THE COMPATIBLE RELATED</p>
-
-        <div class="boton_div">
-            <a href="/admin" target="_self">
-                ADMIN
+    <body class="fondo">
+        <header class="header">
+            <a class="a_icono" href="/" target="_self">
+                <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
             </a>
-        </div>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - Simulador de Armado de CPU
+                </h1>
+            </a>
+        </header>
 
-        <div id="error" class="hidden">
-            <p class="error_text" id="error_text">
+        <div class="contenedor_admin">
+            <div class="window_admin">
+                <a class="boton_homeAdmin" href="/admin" target="_self">
+                    HOME ADMIN
+                </a>
+                <a class="boton_admin" href="/admin/create" target="_self">
+                    CREATE PRODUCTS
+                </a>
+                <a class="boton_admin" href="/admin/delete" target="_self">
+                    DELETE PRODUCTS
+                </a>
+                <a class="boton_admin" href="/admin/update" target="_self">
+                    CHANGE PRODUCTS
+                </a>
+            </div>
+            <div>
+                <p>WHEN DELETING A MOTHERBOARD OR COMPONENT IT ALSO DELETES THE COMPATIBLE RELATED</p>
 
-            </p>
-        </div>
-
-        <div>
-            <h2>DELETE MOTHERBOARD</h2>
-
-            <form id="form_motherboard">
-                <select name="motherboard" id="id_motherboard">
-                    {% for motherboard in motherboards %}
-                    <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
-                    {% endfor %}
-                </select>
-                <input type="submit" value="Submit"/>
-            </form>
-        </div>
-
-        <div>
-            <h2>DELETE COMPONENT</h2>
-
-            <form id="form_component">
-                <select name="component" id="id_component">
-                    {% for component in components %}
-                    <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
-                    {% endfor %}
-                </select>
-                <input type="submit" value="Submit"/>
-            </form>
-        </div>
-
-        <div>
-            <h2>DELETE COMPATIBLE</h2>
-            
-            <form id="form_compatible">
-
-                <select name="compatible" id="id_compatible">
-                    {% for compatible in compatibles %}
-                    <option value="{{compatible[1].id}} {{compatible[2].id}}" id="mc-{{compatible[1].id}}-{{compatible[2].id}}" class="m-{{compatible[1].id}} c-{{compatible[2].id}}">
-                        Motherboard: {{compatible[1].name}} - Componente: {{compatible[2].name}}
-                    </option>
-                    {% endfor %}
-                </select>
-
-                <input type="submit" value="Submit"/>
-            </form>
+                <div class="boton_div">
+                    <a href="/admin" target="_self">
+                        ADMIN
+                    </a>
+                </div>
+        
+                <div id="error" class="hidden">
+                    <p class="error_text" id="error_text">
+        
+                    </p>
+                </div>
+        
+                <div>
+                    <h2>DELETE MOTHERBOARD</h2>
+        
+                    <form id="form_motherboard">
+                        <select name="motherboard" id="id_motherboard">
+                            {% for motherboard in motherboards %}
+                            <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Submit"/>
+                    </form>
+                </div>
+        
+                <div>
+                    <h2>DELETE COMPONENT</h2>
+        
+                    <form id="form_component">
+                        <select name="component" id="id_component">
+                            {% for component in components %}
+                            <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Submit"/>
+                    </form>
+                </div>
+        
+                <div>
+                    <h2>DELETE COMPATIBLE</h2>
+                    
+                    <form id="form_compatible">
+        
+                        <select name="compatible" id="id_compatible">
+                            {% for compatible in compatibles %}
+                            <option value="{{compatible[1].id}} {{compatible[2].id}}" id="mc-{{compatible[1].id}}-{{compatible[2].id}}" class="m-{{compatible[1].id}} c-{{compatible[2].id}}">
+                                Motherboard: {{compatible[1].name}} - Componente: {{compatible[2].name}}
+                            </option>
+                            {% endfor %}
+                        </select>
+        
+                        <input type="submit" value="Submit"/>
+                    </form>
+                </div>
+            </div>
         </div>
 
     </body>
