@@ -690,6 +690,10 @@ def error_404(error):
 def error_500(error):
     return render_template('500.html'), 500
 
+@app.errorhandler(401)
+def error_401(error):
+    return render_template('401.html'), 401
+
 #run
 if __name__ == '__main__':
     app.run(debug=True, port=5002)
