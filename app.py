@@ -11,10 +11,9 @@ from flask import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy import func, ForeignKey
+from sqlalchemy import func
 
 from flask_login import (
-    UserMixin,
     login_user,
     LoginManager,
     login_required,
@@ -43,73 +42,20 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-
 # models
-class User(db.Model, UserMixin):
-    __tablename__ = 'userinfo'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(80), nullable=False)
-    role = db.Column(db.String(), nullable=False, default="user")
-    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-
-    def __repr__(self):
-        return f'user: {self.username}'
-
-class MotherBoard(db.Model):
-    __tablename__ = 'motherboard'
-    id = db.Column(db.Integer, primary_key=True, unique=True)
-    price = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(), nullable=False, unique=True)
-    description = db.Column(db.Text(), nullable=False)
-    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
-    date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
-
-    def __repr__(self):
-        return f'motherboard: {self.name}'
-
-class Component(db.Model):
-    __tablename__ = 'component'
-    id = db.Column(db.Integer, primary_key=True)
-    price = db.Column(db.Float, nullable=False)
-    name = db.Column(db.String(), nullable=False, unique=True)
-    component_type = db.Column(db.String(), nullable=False)
-    description = db.Column(db.Text(), nullable=False)
-    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
-    date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
-
-    def __repr__(self):
-        return f'component: {self.name}'
-
-class Compatible(db.Model):
-    __tablename__ = 'compatible'
-    id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
-    id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
-    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
-    def __repr__(self):
-        return f'compatible: {self.id_motherboard}-{self.id_component}'
-
+from models import (
+    db,
+    User,
+    MotherBoard,
+    Component,
+    Compatible
+)
 
 # functions
-def check_password_difficulty(password_to_check):
-    with open("password_lists.txt", "r") as file:
-        for password in file:
-            if password.rstrip() == password_to_check:
-                return False
-    mayusc_amount = len([i for i in password_to_check if i.isupper()])
-    minusc_amount = len([i for i in password_to_check if i.islower()])
-    digit_amount = len([i for i in password_to_check if i.isdigit()])
-    special_amount = len([i for i in password_to_check if i in "!#$%&()=+-."])
-    password_length = True if len(password_to_check) >= 6 and len(password_to_check) <= 20 else False
-    if mayusc_amount and minusc_amount and digit_amount and special_amount and password_length:
-        return True
-    else:
-        return False
+from functions import (
+    check_password_difficulty,
+    verificar_todo
+)
 
 # controllers
 
@@ -191,8 +137,6 @@ def register_create():
             response['invalid_register'] = False
             hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             new_user = User(username=username, password=hashed.decode('utf-8'))
-            
-        #    new_user = User(username=username, password=password)
             db.session.add(new_user)
             db.session.commit()
     except Exception as e:
@@ -304,15 +248,19 @@ def admin_action(action):
 def create_motherboard():
     response = {}
     if current_user.role != 'admin':
-        abort(400)
+        abort(401)
     else:
         try:
             motherboard_name = request.get_json()["motherboard_name"]
             motherboard_description = request.get_json()["motherboard_description"]
             motherboard_price = request.get_json()["motherboard_price"]
             response['error'] = False
-            if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+            if motherboard_name == '':
+                response['invalid_register'] = "Motherboard name cannot be empty"
+            elif motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
                 response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+            elif motherboard_price == '':
+                response['invalid_register'] = "Motherboard price cannot be empty"
             elif float(motherboard_price) <= 0:
                 response['invalid_register'] = "Motherboard price cannot be negative or zero"
             elif motherboard_description == '':
@@ -323,8 +271,8 @@ def create_motherboard():
                     name=motherboard_name,
                     description=motherboard_description,
                     price=motherboard_price,
-                    create_by = actual_user.username,
-                    modify_by = actual_user.username)
+                    create_by = current_user.id,
+                    modify_by = current_user.id)
                 db.session.add(motherboard)
                 db.session.commit()
 
@@ -353,12 +301,18 @@ def create_component():
             component_type = request.get_json()["component_type"]
             component_price = request.get_json()["component_price"]
             response['error'] = False
-            if component_name in [component.name for component in Component.query.all()]:
+            if component_name == '':
+                response['invalid_register'] = "Component name cannot be empty"
+            elif component_name in [component.name for component in Component.query.all()]:
                 response['invalid_register'] = "Component with same name found in database. Try another name"
+            elif component_price == '':
+                response['invalid_register'] = "Component price cannot be empty"
             elif float(component_price) <= 0:
                 response['invalid_register'] = "Component price cannot be negative or zero"
             elif component_description == '':
                 response['invalid_register'] = "Description cannot be empty"
+            elif component_type == '':
+                response['invalid_register'] = "Component type cannot be empty"
             elif component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
                 response['invalid_register'] = "Component type is not valid"
             else:
@@ -368,8 +322,8 @@ def create_component():
                     description=component_description,
                     price=component_price,
                     component_type=component_type,
-                    create_by = actual_user.username,
-                    modify_by = actual_user.username)
+                    create_by = current_user.id,
+                    modify_by = current_user.id)
                 db.session.add(component)
                 db.session.commit()
 
@@ -389,22 +343,26 @@ def create_component():
 def create_compatible():
     response = {}
     try:
+        response['invalid_register'] = False
         id_motherboard = request.get_json()["id_motherboard"]
         id_component = request.get_json()["id_component"]
 
-        response['error'] = False
-        query = Compatible.query.filter(Compatible.id_component==id_component).filter(Compatible.id_motherboard==id_motherboard).all()
-
-        if query != []:
-            response['invalid_register'] = "The compatible choosen already exists"
+        if id_motherboard == '':
+            response['invalid_register'] = "Motherboard cannot be empty"
+        elif id_component == '':
+            response['invalid_register'] = "Component cannot be empty"
         else:
-            response['invalid_register'] = False
-            compatible = Compatible(
-                id_component=id_component,
-                id_motherboard=id_motherboard,
-                create_by = actual_user.username)
-            db.session.add(compatible)
-            db.session.commit()
+            query = Compatible.query.filter(Compatible.id_component==id_component).filter(Compatible.id_motherboard==id_motherboard).all()
+
+            if query != []:
+                response['invalid_register'] = "The compatible choosen already exists"
+            else:
+                compatible = Compatible(
+                    id_component=id_component,
+                    id_motherboard=id_motherboard,
+                    create_by = current_user.id)
+                db.session.add(compatible)
+                db.session.commit()
     except Exception as e:
         response['error'] = True
         print(e)
@@ -423,20 +381,23 @@ def delete_motherboard():
         id_motherboard = request.get_json()["id_motherboard"]
 
         response['error'] = False
-        # necesario primero eliminar dependecias SI existen
-        query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
-        query1.delete()
-        db.session.commit()
-        
-        query2 = MotherBoard.query.filter_by(id=id_motherboard)
-
-        if query2.all() == []:
-            response['invalid_register'] = "There is no motherboard in database"
+        if id_motherboard == '':
+            response['invalid_register'] = "You must choose a MotherBoard"
         else:
-            response['invalid_register'] = False
-            response['child_id'] = f"m-{id_motherboard}"
-            query2.delete()
+            # necesario primero eliminar dependecias SI existen
+            query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
+            query1.delete()
             db.session.commit()
+            
+            query2 = MotherBoard.query.filter_by(id=id_motherboard)
+
+            if query2.all() == []:
+                response['invalid_register'] = "There is no motherboard in database"
+            else:
+                response['invalid_register'] = False
+                response['child_id'] = f"m-{id_motherboard}"
+                query2.delete()
+                db.session.commit()
 
 
     except Exception as e:
@@ -453,23 +414,25 @@ def delete_motherboard():
 def delete_component():
     response = {}
     try:
-        id_component = request.get_json()["id_component"]
-
         response['error'] = False
-        # necesario primero eliminar dependecias SI existen
-        query1 = Compatible.query.filter_by(id_component=id_component)
-        query1.delete()
-        db.session.commit()
-
-        query2 = Component.query.filter_by(id=id_component)
-
-        if query2.all() == []:
-            response['invalid_register'] = "There is no component in database"
+        id_component = request.get_json()["id_component"]
+        if id_component == '':
+            response['invalid_register'] = "You must choose a Component"
         else:
-            response['invalid_register'] = False
-            response['child_id'] = f"c-{id_component}"
-            query2.delete()
+        # necesario primero eliminar dependecias SI existen
+            query1 = Compatible.query.filter_by(id_component=id_component)
+            query1.delete()
             db.session.commit()
+
+            query2 = Component.query.filter_by(id=id_component)
+
+            if query2.all() == []:
+                response['invalid_register'] = "There is no component in database"
+            else:
+                response['invalid_register'] = False
+                response['child_id'] = f"c-{id_component}"
+                query2.delete()
+                db.session.commit()
 
     except Exception as e:
         response['error'] = True
@@ -485,19 +448,23 @@ def delete_component():
 def delete_compatible():
     response = {}
     try:
-        id_compatible = request.get_json()["id_compatible"]
-        id_motherboard, id_component = id_compatible.split()
-
         response['error'] = False
-        query = Compatible.query.filter(Compatible.id_motherboard==id_motherboard).filter(Compatible.id_component==id_component)
-
-        if query.all() == []:
-            response['invalid_register'] = "There is no compatible in database"
+        id_compatible = request.get_json()["id_compatible"]
+        if id_compatible == '':
+            response['invalid_register'] = "You must choose a Compatible"
         else:
-            response['invalid_register'] = False
-            response['child_id'] = f"mc-{id_motherboard}-{id_component}"
-            query.delete()
-            db.session.commit()
+            # separate ids
+            id_motherboard, id_component = id_compatible.split()
+
+            query = Compatible.query.filter(Compatible.id_motherboard==id_motherboard).filter(Compatible.id_component==id_component)
+
+            if query.all() == []:
+                response['invalid_register'] = "There is no compatible in database"
+            else:
+                response['invalid_register'] = False
+                response['child_id'] = f"mc-{id_motherboard}-{id_component}"
+                query.delete()
+                db.session.commit()
 
     except Exception as e:
         response['error'] = True
@@ -514,45 +481,51 @@ def delete_compatible():
 def update_motherboard():
     response = {}
     try:
+        response['error'] = False
         motherboard_id = request.get_json()["motherboard_id"]
 
         motherboard_name = request.get_json()["motherboard_name"]
         motherboard_price = request.get_json()["motherboard_price"]
         motherboard_description = request.get_json()["motherboard_description"]
 
-        response['error'] = False
-        query = MotherBoard.query.filter(MotherBoard.id==motherboard_id)
-
-        if query == []:
-            response['invalid_register'] = "There is motherboard in database"
+        if motherboard_id == '':
+            response['invalid_register'] = "You must choose a MotherBoard"
         else:
-            query = query.first()
-            response['invalid_register'] = False
+            query = MotherBoard.query.filter(MotherBoard.id==motherboard_id)
 
-            if motherboard_name != '':
-                if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
-                    response['invalid_register'] = "Motherboard with same name found in database. Try another name"
-                else:
-                    query.name = motherboard_name
-                    response['child_id'] = f"m-{motherboard_id}"
-                    response['child_name'] = motherboard_name
-                    
-            if motherboard_price != '':
-                if float(motherboard_price) <= 0:
-                    response['invalid_register'] = "Motherboard price cannot be negative or zero"
-                else:
-                    query.price = motherboard_price
-            if motherboard_description != '':
-                query.description = motherboard_description
-
-            if response['invalid_register']:
-                # actualizacion no se hace
-                db.session.rollback()
+            if query == []:
+                response['invalid_register'] = "There is no motherboard in database"
             else:
-                # actualizacion se hace
-                query.dateModified = func.now()
-                query.modify_by = actual_user.username
-                db.session.commit()
+                query = query.first()
+                response['invalid_register'] = False
+
+                if motherboard_name != '':
+                    if motherboard_name in [motherboard.name for motherboard in MotherBoard.query.all()]:
+                        response['invalid_register'] = "Motherboard with same name found in database. Try another name"
+                    else:
+                        query.name = motherboard_name
+                        response['child_id'] = f"m-{motherboard_id}"
+                        response['child_name'] = motherboard_name
+                        
+                if motherboard_price != '':
+                    if float(motherboard_price) <= 0:
+                        response['invalid_register'] = "Motherboard price cannot be negative or zero"
+                    else:
+                        query.price = motherboard_price
+                if motherboard_description != '':
+                    query.description = motherboard_description
+
+                if motherboard_name == '' and motherboard_description == '' and motherboard_price == '':
+                    response['invalid_register'] = "Cannot update if no data is provided"
+
+                if response['invalid_register']:
+                    # actualizacion no se hace
+                    db.session.rollback()
+                else:
+                    # actualizacion se hace
+                    query.dateModified = func.now()
+                    query.modify_by = current_user.id
+                    db.session.commit()
 
     except Exception as e:
         response['error'] = True
@@ -568,6 +541,7 @@ def update_motherboard():
 def update_component():
     response = {}
     try:
+        response['error'] = False
         component_id = request.get_json()["component_id"]
 
         component_name = request.get_json()["component_name"]
@@ -575,44 +549,49 @@ def update_component():
         component_description = request.get_json()["component_description"]
         component_type = request.get_json()["component_type"]
 
-        response['error'] = False
-        query = Component.query.filter(Component.id==component_id)
-
-        if query == []:
-            response['invalid_register'] = "There is component in database"
+        if component_id == '':
+            response['invalid_register'] = "You must choose a component"
         else:
-            query = query.first()
-            response['invalid_register'] = False
+            query = Component.query.filter(Component.id==component_id)
 
-            if component_name != '':
-                if component_name in [component.name for component in Component.query.all()]:
-                    response['invalid_register'] = "Component with same name found in database. Try another name"
-                else:
-                    query.name = component_name
-                    response['child_id'] = f"c-{component_id}"
-                    response['child_name'] = component_name
-                    
-            if component_price != '':
-                if float(component_price) <= 0:
-                    response['invalid_register'] = "Component price cannot be negative or zero"
-                else:
-                    query.price = component_price
-            if component_description != '':
-                query.description = component_description
-            if component_type != '':
-                if component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
-                    response['invalid_register'] = "Component type is not valid"
-                else:
-                    query.component_type = component_type
-
-            if response['invalid_register']:
-                # actualizacion no se hace
-                db.session.rollback()
+            if query == []:
+                response['invalid_register'] = "There is component in database"
             else:
-                # actualizacion se hace
-                query.dateModified = func.now()
-                query.modify_by = actual_user.username
-                db.session.commit()
+                query = query.first()
+                response['invalid_register'] = False
+
+                if component_name != '':
+                    if component_name in [component.name for component in Component.query.all()]:
+                        response['invalid_register'] = "Component with same name found in database. Try another name"
+                    else:
+                        query.name = component_name
+                        response['child_id'] = f"c-{component_id}"
+                        response['child_name'] = component_name
+                        
+                if component_price != '':
+                    if float(component_price) <= 0:
+                        response['invalid_register'] = "Component price cannot be negative or zero"
+                    else:
+                        query.price = component_price
+                if component_description != '':
+                    query.description = component_description
+                if component_type != '':
+                    if component_type not in ['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']:
+                        response['invalid_register'] = "Component type is not valid"
+                    else:
+                        query.component_type = component_type
+                
+                if component_name == '' and component_price == '' and component_description == '' and component_type == '':
+                    response['invalid_register'] = "Cannot update if no data is provided"
+
+                if response['invalid_register']:
+                    # actualizacion no se hace
+                    db.session.rollback()
+                else:
+                    # actualizacion se hace
+                    query.dateModified = func.now()
+                    query.modify_by = current_user.id
+                    db.session.commit()
 
     except Exception as e:
         response['error'] = True
@@ -642,47 +621,6 @@ def simulator_buy():
         gpu = request.get_json()['gpu']
         pc_cooling = request.get_json()['pc_cooling']
         peripherals = request.get_json()['peripherals']
-
-        '''
-        print('motherboard', motherboard)
-        print('psu', psu)
-        print('cpu', cpu)
-        print('hdd', hdd)
-        print('ram', ram)
-        print('ssd', ssd)
-        print('gpu', gpu)
-        print('pc_cooling', pc_cooling)
-        print('peripherals', peripherals)
-
-        '''
-
-        def verificar_existencia(id_componente, Tipo):
-            if id_componente == 0:
-                return False
-            if Tipo.query.get(id_componente) is None:
-                db.session.close()
-                return False
-            db.session.close()
-            return True
-        
-        def retornar_tipo(id_componente, Tipo):
-            return Tipo.query.get(id_componente)
-
-        def agregar_a_matriz(componente, matriz):
-            matriz.append(componente.name)
-            matriz.append(componente.price)
-
-
-        def sumar_a_precio_total(componente, precio_total):
-            precio_total += componente.price
-            return precio_total
-        
-        def verificar_todo(id, Tipo, matriz, precio_total):
-            if verificar_existencia(id, Tipo):
-                componente = retornar_tipo(id, Tipo)
-                agregar_a_matriz(componente, matriz)
-                precio_total = sumar_a_precio_total(componente, precio_total)
-            return precio_total
 
         precio_total = verificar_todo(motherboard, MotherBoard, matriz, precio_total)
         precio_total = verificar_todo(psu, Component, matriz, precio_total)
