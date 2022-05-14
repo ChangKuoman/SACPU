@@ -22,6 +22,8 @@ from flask_login import (
     current_user
 )
 
+import bcrypt
+
 # constants
 anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
 chang_static_path = "/home/chang/Escritorio/SACPU/templates/static"
@@ -92,8 +94,6 @@ class Compatible(db.Model):
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
 
-# global variables
-actual_user = ''
 
 # functions
 def check_password_difficulty(password_to_check):
@@ -148,7 +148,8 @@ def login_enter():
         if user == None:
             # user does not exists
             response['invalid_login'] = True
-        elif user.password == password:
+        elif bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):      
+      #  elif user.password == password:
             # correct login     
             login_user(user)
             response['invalid_login'] = False
@@ -188,7 +189,10 @@ def register_create():
         else:
             # valid register
             response['invalid_register'] = False
-            new_user = User(username=username, password=password)
+            hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            new_user = User(username=username, password=hashed.decode('utf-8'))
+            
+        #    new_user = User(username=username, password=password)
             db.session.add(new_user)
             db.session.commit()
     except Exception as e:
