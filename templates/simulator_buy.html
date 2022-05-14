@@ -1,0 +1,27 @@
+<html>
+    <body>
+        
+
+        {% for component in components %}
+        <!--Poner a la izq-->
+        <div>
+            {{component[0]}}
+        </div>
+        <!--Poner a la der-->
+        <div>
+            {{component[1]}}
+        </div>
+        {% endfor %}
+
+        <!--Poner a la izq-->
+        <div>
+            TOTAL PRICE: 
+        </div>
+        <!--Poner a la der-->
+        <div>
+            {{precio_total}}
+        </div>
+
+        <!--Boton de regreso a simulator-->
+    </body>
+</html>

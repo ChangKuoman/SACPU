@@ -73,6 +73,7 @@
                         <input type="text" id="component_description"/>
                         <P>Tipo de Componente</P>
                         <select id="component_type">
+                            <option value="" hidden selected>SELECT AN OPTION</option>
                             <option value="RAM">RAM (Random Access Memory)</option>
                             <option value="SSD">SSD (Solid State Drive)</option>
                             <option value="HDD">HDD (Hard Drive Disk)</option>
@@ -94,6 +95,7 @@
                     <form id="form_compatible">
                         <p>Motherboard</p>
                         <select name="motherboard" id="id_motherboard">
+                            <option value="" hidden selected>SELECT AN OPTION</option>
                             {% for motherboard in motherboards %}
                             <option value={{motherboard.id}}>{{motherboard.name}}</option>
                             {% endfor %}
@@ -101,6 +103,7 @@
         
                         <p>Component</p>
                         <select name="component" id="id_component">
+                            <option value="" hidden selected>SELECT AN OPTION</option>
                             {% for component in components %}
                             <option value={{component.id}}>{{component.name}}</option>
                             {% endfor %}

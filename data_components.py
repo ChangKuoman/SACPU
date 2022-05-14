@@ -1,4 +1,8 @@
-from app import db, Component
+from models import Component, db
+from app import create_app
+
+app = create_app()
+app.app_context().push()
 
 # attributes for Component (not null)
 #   id:             int         (pk), default: sequence
@@ -10,7 +14,7 @@ from app import db, Component
 #   dateModified:   DateTime    default: func.now()
 
 c1 = Component(
-    id=1,
+    id=501,
     price=169,
     name="T-FORCE VULCAN Z",
     component_type="RAM",
@@ -18,7 +22,7 @@ c1 = Component(
 )
 
 c2 = Component(
-    id=2,
+    id=502,
     price=189,
     name="VENGEANCE LPX",
     component_type="RAM",
@@ -26,7 +30,7 @@ c2 = Component(
 )
 
 c3 = Component(
-    id=3,
+    id=503,
     price=96,
     name="Just another SSD",
     component_type="SSD",
@@ -34,7 +38,7 @@ c3 = Component(
 )
 
 c4 = Component(
-    id=4,
+    id=504,
     price=88,
     name="Just an SSD",
     component_type="SSD",
@@ -42,7 +46,7 @@ c4 = Component(
 )
 
 c5 = Component(
-    id=5,
+    id=505,
     price=500,
     name="Just an HDD",
     component_type="HDD",
@@ -50,7 +54,7 @@ c5 = Component(
 )
 
 c6 = Component(
-    id=6,
+    id=506,
     price=510,
     name="Just another HDD",
     component_type="HDD",
@@ -58,7 +62,7 @@ c6 = Component(
 )
 
 c7 = Component(
-    id=7,
+    id=507,
     price=800,
     name="Just an CPU",
     component_type="CPU",
@@ -66,7 +70,7 @@ c7 = Component(
 )
 
 c8 = Component(
-    id=8,
+    id=508,
     price=46.48,
     name="Just another CPU",
     component_type="CPU",
@@ -74,7 +78,7 @@ c8 = Component(
 )
 
 c9 = Component(
-    id=9,
+    id=509,
     price=808,
     name="Just an GPU",
     component_type="GPU",
@@ -82,7 +86,7 @@ c9 = Component(
 )
 
 c10 = Component(
-    id=10,
+    id=510,
     price=462.48,
     name="Just another GPU",
     component_type="GPU",
@@ -90,7 +94,7 @@ c10 = Component(
 )
 
 c11 = Component(
-    id=11,
+    id=511,
     price=872,
     name="Just an PSU",
     component_type="PSU",
@@ -98,7 +102,7 @@ c11 = Component(
 )
 
 c12 = Component(
-    id=12,
+    id=512,
     price=75.4,
     name="Just another PSU",
     component_type="PSU",
@@ -106,7 +110,7 @@ c12 = Component(
 )
 
 c13 = Component(
-    id=13,
+    id=513,
     price=75.7,
     name="Just an PC Cooling",
     component_type="PC Cooling",
@@ -114,7 +118,7 @@ c13 = Component(
 )
 
 c14 = Component(
-    id=14,
+    id=514,
     price=7.48,
     name="Just another PC Cooling",
     component_type="PC Cooling",
@@ -122,7 +126,7 @@ c14 = Component(
 )
 
 c15 = Component(
-    id=15,
+    id=515,
     price=778.4,
     name="A RAT",
     component_type="Peripheral",
@@ -130,7 +134,7 @@ c15 = Component(
 )
 
 c16 = Component(
-    id=16,
+    id=516,
     price=42,
     name="HEADPHONES",
     component_type="Peripheral",
@@ -138,7 +142,7 @@ c16 = Component(
 )
 
 c17 = Component(
-    id=17,
+    id=517,
     price=5.4,
     name="KEYBOARD",
     component_type="Peripheral",
@@ -146,7 +150,7 @@ c17 = Component(
 )
 
 c18 = Component(
-    id=18,
+    id=518,
     price=48.86,
     name="MICROPHONE",
     component_type="Peripheral",
