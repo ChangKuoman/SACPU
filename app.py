@@ -625,36 +625,76 @@ def update_component():
 def simulator_buy():
     response = {'error': False}
     try:
-        m1 = request.form.get('motherboard', '')
-        print(m1)
+        matriz = [] 
+        # 0: nombre, 1: precio
+        precio_total = 0
+
         motherboard = request.get_json()['motherboard']
-        print('motherboard', motherboard)
-        
         psu = request.get_json()['psu']
-        print('psu', psu)
-
         cpu = request.get_json()['cpu']
-        print('cpu', cpu)
-
         hdd = request.get_json()['hdd']
-        print('hdd', hdd)
-
         ram = request.get_json()['ram']
-        print('ram', ram)
-
         ssd = request.get_json()['ssd']
-        print('ssd', ssd)
-
         gpu = request.get_json()['gpu']
-        print('gpu', gpu)
-
         pc_cooling = request.get_json()['pc_cooling']
-        print('pc_cooling', pc_cooling)
-
         peripherals = request.get_json()['peripherals']
+
+        '''
+        print('motherboard', motherboard)
+        print('psu', psu)
+        print('cpu', cpu)
+        print('hdd', hdd)
+        print('ram', ram)
+        print('ssd', ssd)
+        print('gpu', gpu)
+        print('pc_cooling', pc_cooling)
         print('peripherals', peripherals)
 
+        '''
 
+        def verificar_existencia(id_componente, Tipo):
+            if id_componente == 0:
+                return False
+            if Tipo.query.get(id_componente) is None:
+                db.session.close()
+                return False
+            db.session.close()
+            return True
+        
+        def retornar_tipo(id_componente, Tipo):
+            return Tipo.query.get(id_componente)
+
+        def agregar_a_matriz(componente, matriz):
+            matriz.append(componente.name)
+            matriz.append(componente.price)
+
+
+        def sumar_a_precio_total(componente, precio_total):
+            precio_total += componente.price
+            return precio_total
+        
+        def verificar_todo(id, Tipo, matriz, precio_total):
+            if verificar_existencia(id, Tipo):
+                componente = retornar_tipo(id, Tipo)
+                agregar_a_matriz(componente, matriz)
+                precio_total = sumar_a_precio_total(componente, precio_total)
+            return precio_total
+
+        precio_total = verificar_todo(motherboard, MotherBoard, matriz, precio_total)
+        precio_total = verificar_todo(psu, Component, matriz, precio_total)
+        precio_total = verificar_todo(cpu, Component, matriz, precio_total)
+        precio_total = verificar_todo(hdd, Component, matriz, precio_total)
+        precio_total = verificar_todo(ram, Component, matriz, precio_total)
+        precio_total = verificar_todo(ssd, Component, matriz, precio_total)
+        precio_total = verificar_todo(gpu, Component, matriz, precio_total)
+        precio_total = verificar_todo(pc_cooling, Component, matriz, precio_total)
+
+        for peripheral in peripherals:
+            precio_total = verificar_todo(peripheral, Component, matriz, precio_total)
+
+
+        response['precio_total'] = round(precio_total, 2)
+        response['matriz'] = matriz
 
     except Exception as e:
         response['error'] = True
@@ -663,8 +703,30 @@ def simulator_buy():
     finally:
         db.session.close()
 
-
     return jsonify(response)
+
+@app.route('/buy/<precio_total>/<lista>')
+@login_required
+def compra_resultado(precio_total, lista):
+    lista = lista.strip("]")
+    lista = lista.strip("[")
+
+    lista_nombres = []
+    lista_precios = []
+
+    counter = 0
+    for i in lista.split(','):
+        if counter % 2 == 0:
+            lista_nombres.append(str(i.strip('"')))
+        else:
+            lista_precios.append(float(i))
+        counter += 1
+    
+    lista = list(zip(lista_nombres, lista_precios))
+
+    return render_template('simulator_buy.html',
+                            precio_total=precio_total,
+                            components=lista)
 
 # error redirect
 @app.route('/errors/<error>', methods=['POST', 'GET'])

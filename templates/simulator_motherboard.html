@@ -325,6 +325,14 @@
             }).then(response => response.json())
             .then(function(jsonResponse){
                 console.log(jsonResponse);
+                if (jsonResponse['error']){
+                    window.location.href = '/errors/500';
+                }
+                else{
+                    window.location.href = '/buy/' + parseFloat(jsonResponse['precio_total']) + "/" + JSON.stringify(jsonResponse['matriz']);
+                }
+
+
             }).catch(function(){
                 console.log('something went wrong buy');
             });
