@@ -25,7 +25,7 @@ import bcrypt
 
 # constants
 anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
-chang_static_path = "/home/chang/Escritorio/SACPU/templates/static"
+chang_static_path = "/home/chang/Escritorio/sacpu3/SACPU/templates/static"
 
 anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
@@ -56,6 +56,14 @@ from functions import (
     check_password_difficulty,
     verificar_todo
 )
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = 'papasfritas15'
+    db.init_app(app)
+    return app
 
 # controllers
 
@@ -678,6 +686,8 @@ def redirect_errors(error):
         abort(500)
     if int(error) == 401:
         abort(401)
+    if int(error) == 400:
+        abort(401)
     else:
         abort(404)
 
@@ -693,6 +703,10 @@ def error_500(error):
 @app.errorhandler(401)
 def error_401(error):
     return render_template('401.html'), 401
+
+@app.errorhandler(400)
+def error_400(error):
+    return render_template('400.html'), 400
 
 #run
 if __name__ == '__main__':

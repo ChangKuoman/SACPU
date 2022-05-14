@@ -42,6 +42,7 @@
                         <div class="descripcion_producto">
                             <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
                         </div>
+                        <input type="reset" id="reset-button" value="RESET"/>
                     </div>
                     
                     <form id="form" name="form" class="text_simulator_part2">
@@ -212,6 +213,19 @@
     </body>
 
     <!--script must be here-->
+    <script>
+        document.getElementById("reset-button").onclick = function(e){
+            e.preventDefault();
+            document.getElementById("form").reset();
+            const elem = document.getElementById("shopping_items");
+            
+            while (elem.lastChild.tagName == 'LI'){
+                elem.removeChild(elem.lastChild);
+            }
+
+        }
+    </script>
+
     <script>
         document.getElementById("boton-compra").onclick = function(e){
             e.preventDefault();

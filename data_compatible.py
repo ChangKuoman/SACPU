@@ -1,4 +1,8 @@
-from app import db, Compatible
+from models import Compatible, db
+from app import create_app
+
+app = create_app()
+app.app_context().push()
 
 # attributes for Compatible (not null)
 #   id_motherboard: int         (fk -> motherboard.id)
@@ -7,103 +11,103 @@ from app import db, Compatible
 #   dateModified:   DateTime    default: func.now()
 
 c1 = Compatible(
-    id_motherboard=1,
-    id_component=1,
+    id_motherboard=501,
+    id_component=501,
 )
 
 c2 = Compatible(
-    id_motherboard=1,
-    id_component=2,
+    id_motherboard=501,
+    id_component=502,
 )
 
 c3 = Compatible(
-    id_motherboard=1,
-    id_component=3,
+    id_motherboard=501,
+    id_component=503,
 )
 
 c4 = Compatible(
-    id_motherboard=1,
-    id_component=4,
+    id_motherboard=501,
+    id_component=504,
 )
 
 c5 = Compatible(
-    id_motherboard=1,
-    id_component=5,
+    id_motherboard=501,
+    id_component=505,
 )
 
 c6 = Compatible(
-    id_motherboard=1,
-    id_component=6,
+    id_motherboard=501,
+    id_component=506,
 )
 
 c7 = Compatible(
-    id_motherboard=1,
-    id_component=7,
+    id_motherboard=501,
+    id_component=507,
 )
 
 c8 = Compatible(
-    id_motherboard=1,
-    id_component=8,
+    id_motherboard=501,
+    id_component=508,
 )
 
 c9 = Compatible(
-    id_motherboard=1,
-    id_component=9,
+    id_motherboard=501,
+    id_component=509,
 )
 
 c10 = Compatible(
-    id_motherboard=1,
-    id_component=10,
+    id_motherboard=501,
+    id_component=510,
 )
 
 c11 = Compatible(
-    id_motherboard=1,
-    id_component=11,
+    id_motherboard=501,
+    id_component=511,
 )
 
 c12 = Compatible(
-    id_motherboard=1,
-    id_component=12,
+    id_motherboard=501,
+    id_component=512,
 )
 
 c13 = Compatible(
-    id_motherboard=1,
-    id_component=13,
+    id_motherboard=501,
+    id_component=513,
 )
 
 c14 = Compatible(
-    id_motherboard=1,
-    id_component=14,
+    id_motherboard=501,
+    id_component=514,
 )
 
 c15 = Compatible(
-    id_motherboard=1,
-    id_component=15,
+    id_motherboard=501,
+    id_component=515,
 )
 
 c16 = Compatible(
-    id_motherboard=1,
-    id_component=16,
+    id_motherboard=501,
+    id_component=516,
 )
 
 c17 = Compatible(
-    id_motherboard=1,
-    id_component=17,
+    id_motherboard=501,
+    id_component=517,
 )
 
 c18 = Compatible(
-    id_motherboard=1,
-    id_component=18,
+    id_motherboard=501,
+    id_component=518,
 )
 
 c19 = Compatible(
-    id_motherboard=2,
-    id_component=1,
+    id_motherboard=502,
+    id_component=501,
 )
 
 c20 = Compatible(
-    id_motherboard=2,
-    id_component=5,
+    id_motherboard=502,
+    id_component=505,
 )
 
 try:
