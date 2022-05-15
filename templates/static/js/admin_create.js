@@ -102,7 +102,7 @@ document.getElementById('form_component').onchange = function(e){
     document.getElementById('error').className = 'hidden';
 }
 
-// function for form_component form
+// function for form_compatible form
 document.getElementById('form_compatible').onsubmit = function(e) {
     e.preventDefault();
     const id_motherboard = document.getElementById('id_motherboard').value;

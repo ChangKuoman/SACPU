@@ -26,9 +26,9 @@ def retornar_tipo(id_componente, Tipo):
     return Tipo.query.get(id_componente)
 
 
-def agregar_a_matriz(componente, matriz):
-    matriz.append(componente.name)
-    matriz.append(componente.price)
+def agregar_a_lista(componente, lista):
+    lista.append(componente.name)
+    lista.append(componente.price)
 
 
 def sumar_a_precio_total(componente, precio_total):
@@ -36,9 +36,9 @@ def sumar_a_precio_total(componente, precio_total):
     return precio_total
 
 
-def verificar_todo(id, Tipo, matriz, precio_total):
+def verificar_todo(id, Tipo, lista, precio_total):
     if verificar_existencia(id, Tipo):
         componente = retornar_tipo(id, Tipo)
-        agregar_a_matriz(componente, matriz)
+        agregar_a_lista(componente, lista)
         precio_total = sumar_a_precio_total(componente, precio_total)
     return precio_total
