@@ -144,6 +144,19 @@ html{
     background: whitesmoke;
 }
 
+.center_2{
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    padding: 10px;
+
+    margin-left: 320px;
+    margin-right: 320px;
+
+}
+
 .contenedor_admin{
     width: 90%;
     min-height: 85%;
@@ -753,8 +766,41 @@ html{
     width: 100%;
 }
 
+.row_centrado_2{
+    
+    padding: 3px;
+    margin: 3px;
+
+    display: flex;
+    flex-direction: row;
+
+    border-top: 2px solid rgb(47, 137, 172);
+    border-top-left-radius: 1px;
+
+    width: 100%;
+}
+
 .mod_expensive{
     width: 90%;
+}
+
+
+
+.description_p{
+    font-style: italic;
+    
+    width: 70%;
+    text-align: left;
+
+    padding: 4px;
+}
+.precio_p{
+    width: 30%;
+    text-align: right;
+    
+    padding: 4px;
+    font-weight: 700;
+
 }
 
 /*IMAGENES*/

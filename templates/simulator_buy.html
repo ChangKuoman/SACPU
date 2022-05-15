@@ -21,27 +21,45 @@
                 LOGOUT
             </a>
         </header>
+        <div class="center">
+            <div>
+                <p class="titulos_3">
+                    YOUR SIMULATION HAS ENDED. YOUR BUILT PC WOULD BE:
+                </p>
+            </div>
 
-        {% for component in components %}
-        <!--Poner a la izq-->
-        <div>
-            {{component[0]}}
-        </div>
-        <!--Poner a la der-->
-        <div>
-            {{component[1]}}
-        </div>
-        {% endfor %}
+            <div class="orden_producto">
+                <div class="center_2">
+                    <img src="/static/img/pc_con_gatos.jpg">
+                </div>
+                
+                <div>
+                    {% for component in components %}
+                    <div class="row_centrado">
+                        <div class="description_p">
+                            {{component[0]}}
+                        </div>
+                        <div class="precio_p">
+                            S/. {{component[1]}}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row_centrado_2">
+                    <div class="description_p">
+                        TOTAL PRICE: 
+                    </div>
+                    <div class="precio_p"> 
+                        S/. {{precio_total}}
+                    </div>
+                </div>
 
-        <!--Poner a la izq-->
-        <div>
-            TOTAL PRICE: 
-        </div>
-        <!--Poner a la der-->
-        <div>
-            {{precio_total}}
-        </div>
+                
+            </div>
+            <a class="boton_regresar" href="/simulator" target="_self">
+                ↩ BACK
+            </a>
 
-        <!--Boton de regreso a simulator-->
+        </div>
     </body>
 </html>

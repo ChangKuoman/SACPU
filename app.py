@@ -707,6 +707,7 @@ def compra_resultado(precio_total, lista):
         lista = list(zip(lista_nombres, lista_precios))
     except Exception as e:
         print(e)
+        abort(400)
     finally:
         pass
 
