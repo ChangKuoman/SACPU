@@ -96,6 +96,7 @@
                         <form id="form_compatible">
                             <p>MOTHERBOARD</p>
                             <select class="mod_select"  name="motherboard" id="id_motherboard">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for motherboard in motherboards %}
                                 <option value={{motherboard.id}}>{{motherboard.name}}</option>
                                 {% endfor %}
@@ -103,6 +104,7 @@
             
                             <p>COMPONENT</p>
                             <select class="mod_imput_Admin" class="mod_select" name="component" id="id_component">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for component in components %}
                                 <option value={{component.id}}>{{component.name}}</option>
                                 {% endfor %}
