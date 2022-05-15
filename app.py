@@ -34,6 +34,7 @@ chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
 app = Flask(__name__, static_folder=chang_static_path)
 app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_POOL_SIZE'] = 20
 app.config['SECRET_KEY'] = 'papasfritas15'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -160,12 +161,20 @@ def register_create():
 @app.route('/simulator', methods=['POST', 'GET'])
 @login_required
 def simulator():
+    try:
+        lista_motherboards = MotherBoard.query.all()
+        if current_user.role == "admin":
+            admin = True
+        else:
+            admin = False
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        abort(500)
+    finally:
+        db.session.close()
 
-    if current_user.role == "admin":
-        admin = True
-    else:
-        admin = False
-    return render_template('simulator.html', motherboards=MotherBoard.query.all(), admin=admin)
+    return render_template('simulator.html', motherboards=lista_motherboards, admin=admin)
 
 
 # simulator motherboard
@@ -188,16 +197,20 @@ def simulator_motherboard(motherboard):
         list_PSU = query2.filter_by(component_type = 'PSU').all()
         list_Peripheral = query2.filter_by(component_type = 'Peripheral').all()
 
+        # motherboard
+        list_motherboard = MotherBoard.query.filter_by(id=int(motherboard)).first()
+
     except Exception as e:
         error = True
         print(e)
+        db.session.rollback()
     finally:
-        pass
+        db.session.close()
     
     if error:
         abort(400)
     return render_template('simulator_motherboard.html',
-            motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(),
+            motherboard=list_motherboard,
             list_RAM=list_RAM,
             list_SSD=list_SSD,
             list_HDD=list_HDD,
@@ -228,7 +241,6 @@ def simulator_choose_motherboard():
 @app.route('/admin', methods=['POST', 'GET'])
 @login_required
 def admin():
-    # TODO: hacer que /simulator tenga un botòn que rediriga aquì (html)
     if current_user.role != 'admin':
         abort(401)
     else:
@@ -237,20 +249,35 @@ def admin():
 @app.route("/admin/<action>", methods=['POST', 'GET'])
 @login_required
 def admin_action(action):
-    if current_user.role != 'admin':
-        abort(401)
-    elif action == "create":
+    try:
+        # motherboard
+        list_motherboard = MotherBoard.query.all()
+        # components
+        component_list = Component.query.all()
+        # create
         ram_list = Component.query.filter(Component.component_type == 'RAM').all()
         ssd_list = Component.query.filter(Component.component_type == 'SSD').all()
         gpu_list = Component.query.filter(Component.component_type == 'GPU').all()
         pc_cooling_list = Component.query.filter(Component.component_type == 'PC Cooling').all()
-        component_lists = ram_list + ssd_list + gpu_list + pc_cooling_list
-        return render_template("admin_create.html", motherboards=MotherBoard.query.all(), components=component_lists)
-    elif action == "update":
-        return render_template("admin_update.html", motherboards=MotherBoard.query.all(), components=Component.query.all())
-    elif action == "delete":
+        component_list_need_compatibility = ram_list + ssd_list + gpu_list + pc_cooling_list
+        # delete
         componentTuples= db.session.query(Compatible, MotherBoard, Component).filter(Compatible.id_motherboard==MotherBoard.id).filter(Compatible.id_component==Component.id).all()
-        return render_template("admin_delete.html", motherboards=MotherBoard.query.all(), components=Component.query.all(), compatibles=componentTuples)
+
+    except Exception as e:
+        print(e)
+        abort(500)
+        db.session.rollback()
+    finally:
+        db.session.close()
+
+    if current_user.role != 'admin':
+        abort(401)
+    elif action == "create":
+        return render_template("admin_create.html", motherboards=list_motherboard, components=component_list_need_compatibility)
+    elif action == "update":
+        return render_template("admin_update.html", motherboards=list_motherboard, components=component_list)
+    elif action == "delete":
+        return render_template("admin_delete.html", motherboards=list_motherboard, components=component_list, compatibles=componentTuples)
     else:
         abort(404)
 
@@ -662,21 +689,26 @@ def simulator_buy():
 @app.route('/buy/<precio_total>/<lista>')
 @login_required
 def compra_resultado(precio_total, lista):
-    lista = lista.strip("]")
-    lista = lista.strip("[")
+    try:
+        lista = lista.strip("]")
+        lista = lista.strip("[")
 
-    lista_nombres = []
-    lista_precios = []
+        lista_nombres = []
+        lista_precios = []
 
-    counter = 0
-    for i in lista.split(','):
-        if counter % 2 == 0:
-            lista_nombres.append(str(i.strip('"')))
-        else:
-            lista_precios.append(float(i))
-        counter += 1
-    
-    lista = list(zip(lista_nombres, lista_precios))
+        counter = 0
+        for i in lista.split(','):
+            if counter % 2 == 0:
+                lista_nombres.append(str(i.strip('"')))
+            else:
+                lista_precios.append(float(i))
+            counter += 1
+        
+        lista = list(zip(lista_nombres, lista_precios))
+    except Exception as e:
+        print(e)
+    finally:
+        pass
 
     return render_template('simulator_buy.html',
                             precio_total=precio_total,
