@@ -1,3 +1,6 @@
+
+
+
 document.getElementById('form').onsubmit = function(e) {
     e.preventDefault();
     var ele = document.getElementsByName('motherboard');

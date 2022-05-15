@@ -5,8 +5,12 @@
         </title>
         <link rel="shortcut icon" type="image/png" href="static/img/favicon.ico">
         <link rel="stylesheet" href="/static/css/style2.css">
+        
         <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
+        
     </head>
+
+
 
     <body class="fondo">
         <header class="header">
@@ -15,8 +19,11 @@
             </a>
             <a href="/" target="_self" class="home_button">
                 <h1>
-                    SACPU - Simulador de Armado de CPU
+                    SACPU - PC BUILD SIMULATOR
                 </h1>
+            </a>
+            <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
+                LOGOUT
             </a>
         </header>
         <div class="contenedor_simulador">
@@ -51,10 +58,24 @@
                 </div>
             </div>
             <div class="contenedor_right">
-
+                <div class="hidden" id ="admin" data-admin="{{admin}}">
+                    <div class="boton_centrado">
+                        <a class="boton_to_admin" href="{{url_for('admin')}}" target="_self">
+                            ADMIN
+                        </a>
+                    </div>
+                </div>
             </div>
+            
         </div>
     </body>
+
+    <script>
+        const admin = document.getElementById("admin").dataset.admin;
+        if (admin === "True"){
+            document.getElementById("admin").className="";
+        }
+    </script>
     <!--script must be here-->
     <script src="static/js/simulator.js"></script>
 </html>
