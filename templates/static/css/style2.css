@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');
+
+
 /* CSS GLOBAL*/ 
 html{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: 'Lato', sans-serif;
     box-sizing: border-box;
 }
 *, *::before, *::after {
@@ -34,7 +37,7 @@ html{
     color: #333;
 }
 .header_home {
-    margin-top: 2%;
+    margin-top: 1%;
     margin-left: 3%;
     margin-right: 3%;
     border-radius: 10px 10px;
@@ -166,6 +169,30 @@ html{
     border-radius: 7px 7px;
 }
 
+.contenedor_cambiosAdmin {
+    width: 80%;
+    max-height: 750px;
+    margin: 15px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.contenedor_cambiosAdmin::-webkit-scrollbar {
+    width: 7px;
+}
+
+.contenedor_cambiosAdmin::-webkit-scrollbar-thumb {
+    
+    background: rgb(47, 137, 172);
+    border-radius: 5px 5px;
+}
+
+
 /*BOTONES ADMIN*/
 .boton_homeAdmin{
     width: 250px;
@@ -222,6 +249,98 @@ html{
     border-left: 7px solid #2a80f0;
 }
 
+.boton_to_admin{
+    text-align: center;
+    width: 50%;
+
+    font-weight: 600;
+    background: #2b2b2b;
+    color: aliceblue;
+
+    text-decoration: none;
+    padding: 7px;
+}
+.boton_to_admin:hover{
+    border-left: 7px solid #2a80f0;
+}
+
+
+.boton_admin_to_simulator{
+    width: 250px;
+    display: inline-block;
+
+    border-radius: 3px 3px;
+    border: none;
+    margin-left: 1%;
+    margin-right: 1%;
+    padding: 1%;
+    padding-left: 5px;
+
+    background: #2b2b2b;
+
+    text-decoration: none;
+    text-align: justify;
+    color: rgb(255, 255, 255);
+    font-size: 15px;
+    font-weight: 700;
+
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top-color: #c5c5c5ea;
+    border-top-style: solid;
+    border-top-width: 2px;
+}
+
+.boton_admin_to_simulator:hover{
+    border-left: 7px solid #2a80f0;
+}
+
+.boton_Adelete{
+    background: rgb(231, 73, 73);
+
+    color: aliceblue;
+    padding: 5px;
+    border: none;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+
+    margin-left: 5px;
+}
+
+.boton_Adelete:hover{
+    background-color: rgb(194, 40, 40);
+}
+
+.boton_Acreate{
+    background: rgb(65, 231, 129);
+
+    color: aliceblue;
+    padding: 5px;
+    border: none;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+
+    margin-left: 5px;
+}
+.boton_Acreate:hover{
+    background-color: #28b858ea;
+}
+
+.boton_Aupdate{
+    background: rgb(82, 124, 240);
+
+    color: aliceblue;
+    padding: 5px;
+    border: none;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+
+    margin-left: 5px;
+}
+
+.boton_Aupdate:hover{
+    background-color: #2051aaea;
+}
 
 /*CAJAS*/
 .form_div{
@@ -251,8 +370,8 @@ html{
     border-radius: 10px 10px;
 
     text-align: justify;
-    font-style:normal;
-    font-family: fantasy;
+    font-style:italic;
+    font-family: 'Lato', sans-serif;
     font-size: 20px;
 
     background: #fffffffd;
@@ -265,6 +384,9 @@ html{
     text-decoration: none;
     color: black;
     text-align: center;
+
+    font-size: 22px;
+    
 
     filter: drop-shadow(5px 10px 5px #000000e8);
 }
@@ -286,7 +408,7 @@ html{
     margin-right: 1%;
     padding: 1%;
 
-    background: rgba(190, 187, 187, 0.932);
+    background: rgba(34, 132, 139, 0.932);
 
     text-decoration: none;
     text-align: center;
@@ -300,19 +422,23 @@ html{
 }
 .Enunciado {
     width: 100%;
+    height: 18%;
     justify-content: center;
     text-align: center;
 
-    font-family:sans-serif;
+    font-family: 'Lato', sans-serif;
 
     margin-bottom: 10px;
     border-bottom: 1.5px solid rgba(59, 55, 55, 0.904);
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+
 }
 .text_simulator{
     width: 100%;
-    height: auto;
-    min-height: 84%;
+    height: 90%;
     display: flex;
+    justify-content:baseline;
     flex-direction: column;
 
     padding-left: 5px;
@@ -321,10 +447,24 @@ html{
 
 .text_simulator_part1{
     width: 100%;
+    height: 100%;
+
+    overflow: scroll;
     
     display: flex;
     flex-direction: row;
 }
+
+.text_simulator_part1::-webkit-scrollbar {
+    width: 7px;
+    
+}
+
+.text_simulator_part1::-webkit-scrollbar-thumb {
+    background: rgb(47, 137, 172);
+    border-radius: 5px 5px;
+}
+
 
 .text_simulator_part2{
     width: 100%;
@@ -364,6 +504,8 @@ html{
     
     margin-left: 10px;
     padding-top: 15px;
+
+    justify-content: center;
 }
 
 .descripcion_producto{
@@ -406,7 +548,7 @@ html{
     padding: 10px;
     background: #caf4ff;
 
-    font-family: sans-serif;
+    font-family: 'Lato' , sans-serif;
 }
 .caja_compra:hover{
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
@@ -418,8 +560,33 @@ html{
     flex-direction: row;
 
     font-size: 15px;
-    color: #2a80f0;;
+    color: #2a80f0;
 }
+
+.box_Admin_l{
+    width: 90%;
+
+    overflow: scroll;
+}
+
+.box_Admin_l::-webkit-scrollbar {
+    width: 7px;
+    
+}
+
+.box_Admin_l::-webkit-scrollbar-thumb {
+    background: rgb(47, 137, 172);
+    border-radius: 5px 5px;
+}
+
+
+.box_Admin_r{
+    width: 20%;
+
+    display: flex;
+    justify-content: center;
+}
+
 /*MODIFICACIONES TEXTUALES Y VISUALES*/
 .hidden {
     display: none;
@@ -430,11 +597,31 @@ html{
     margin: auto;
 
     text-align: center;
-    color: rgba(255, 0, 0, 0.945);
+    color: rgba(255, 255, 255, 0.945);
+    font-style: italic;
+    font-weight: bold;
 
-    padding: 1px;
+
+    padding: 3px;
     border-radius: 5px 5px;
     background: #252850;
+    font-size: 14px;
+}
+
+.error_text_2{
+    width: 90%;
+    margin: auto;
+
+    text-align: center;
+    color: aliceblue;
+    font-style: italic;
+    font-weight: bold;
+
+    margin-top: 250px;
+    margin-bottom: 100px;
+    padding: 3px;
+    border-radius: 5px 5px;
+    background: #404047;
     font-size: 14px;
 }
 
@@ -444,7 +631,7 @@ html{
 
 .titulos {
     font-weight: bold;
-    font-family: sans-serif;
+    font-family: 'Lato', sans-serif;
 
     margin: 0%;
     margin-top: 3px;
@@ -456,7 +643,7 @@ html{
 
     font-weight: bold;
     font-size: 20px;
-    font-family: sans-serif;
+    font-family: 'Lato', sans-serif;
 
     margin: 0%;
     margin-top: 3px;
@@ -468,7 +655,7 @@ html{
 .titulos_3{
     color: #2f89ff;
     font-weight: bold;
-    font-family:sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 20px;
 
     margin: 0%;
@@ -479,7 +666,7 @@ html{
 .titulos_4{
     color: #2a80f0;
     font-weight: bold;
-    font-family:sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 20px;
 
     margin: 0%;
@@ -491,6 +678,40 @@ html{
 
 .description_list{
     font-size: 14px;
+}
+
+.boton_centrado{
+    width: 100%;
+    padding: 0%;
+    padding-left: 20%;
+    padding-right: 20%;
+    margin: 0%;
+
+    display: flex;
+    justify-content: center;
+}
+
+.mod_select{
+    border: none;
+    background: aliceblue;
+
+    font-family: 'Lato', sans-serif;
+
+    font-size: 15px;
+    padding: 3px;
+}
+
+.mod_imput_Admin{
+    width: 300px;
+
+    padding: 5px;
+    border: none;
+    color: #333;
+
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+
+    background-color: aliceblue;
 }
 
 /*IMAGENES*/
@@ -519,21 +740,20 @@ html{
 .boton_submit{
     display: inline-block;
 
+    width: 100%;
+
     margin-top: 3%;
-    margin-left: 30%;
-    margin-right: 30%;
     margin-bottom: 2%;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 4px;
     padding-right: 4px;
     
-
     font-size: 15px;
     cursor: pointer;
     text-decoration: none;
 
-    font-family: fantasy;
+    font-family: 'Lato', sans-serif;
     text-align: center;
     border: 2px solid rgb(58, 58, 58);
     background: #c5c5c5;
@@ -599,6 +819,7 @@ html{
 
 input{
     border-radius: 5px 5px;
+    cursor: pointer;
 }
 
 /*FOOTER*/

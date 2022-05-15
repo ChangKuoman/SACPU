@@ -15,8 +15,11 @@
             </a>
             <a href="/" target="_self" class="home_button">
                 <h1>
-                    SACPU - Simulador de Armado de CPU
+                    SACPU - PC BUILD SIMULATOR
                 </h1>
+            </a>
+            <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
+                LOGOUT
             </a>
         </header>
 
@@ -34,89 +37,90 @@
                 <a class="boton_admin" href="/admin/update" target="_self">
                     EDITAR PRODUCTOS
                 </a>
+                <a class="boton_admin_to_simulator" href="/simulator" target="_self">
+                    SIMULATOR
+                </a>
             </div>
 
-            <div>
-                <div id="error" class="hidden">
-                    <p class="error_text" id="error_text">
-        
-                    </p>
+            
+            <div class="contenedor_cambiosAdmin">
+                <div class="box_Admin_l">
+                    <div class="Enunciado">
+                        <h1>
+                            UPDATE CANNOT BE MADE TO ID, IF YOU DONT PUT ANYTHING, IT WILL NOT BE UPDATED
+                        </h1>
+                    </div>
+            
+                    <div>
+                        <h2>UPDATE MOTHERBOARD</h2>
+            
+                        <form id="form_motherboard">
+                            <select class="mod_select" name="motherboard" id="motherboard_id">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
+                                {% for motherboard in motherboards %}
+                                <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
+                                {% endfor %}
+                            </select>
+            
+                            <p>NAME</p>
+                            <input class="mod_imput_Admin" type="text" id="motherboard_name"/>
+            
+                            <p>PRICE</p>
+                            <input class="mod_imput_Admin" type="number" id="motherboard_price" step="0.01"/>
+            
+                            <p>DESCRIPTION</p>
+                            <input class="mod_imput_Admin" type="text" id="motherboard_description"/>
+            
+                            <input class="boton_Aupdate" type="submit" value="UPDATE"/>
+                        </form>
+                    </div>
+            
+                    <div>
+                        <h2>UPDATE COMPONENT</h2>
+            
+                        <form id="form_component">
+                            <select class="mod_select" name="component" id="component_id">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
+                                {% for component in components %}
+                                <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
+                                {% endfor %}
+                            </select>
+            
+                            <p>NAME</p>
+                            <input class="mod_imput_Admin" type="text" id="component_name"/>
+            
+                            <p>PRICE</p>
+                            <input class="mod_imput_Admin" type="number" id="component_price" step="0.01"/>
+            
+                            <p>DESCRIPTION</p>
+                            <input class="mod_imput_Admin" type="text" id="component_description"/>
+            
+                            <p>COMPONENT TYPE</p>
+                            <select class="mod_select" id="component_type">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
+                                <option value="RAM">RAM (Random Access Memory)</option>
+                                <option value="SSD">SSD (Solid State Drive)</option>
+                                <option value="HDD">HDD (Hard Drive Disk)</option>
+                                <option value="CPU">CPU (Central Processing Unit)</option>
+                                <option value="GPU">GPU (Graphics Processing Unit)</option>
+                                <option value="PSU">PSU (Power Supply Unit)</option>
+                                <option value="PC Cooling">PC Cooling</option>
+                                <option value="Peripheral">Peripheral</option>
+                            </select>
+            
+                            <input class="boton_Aupdate" type="submit" value="UPDATE"/>
+                        </form>
+                    </div>
+
                 </div>
-        
-                <p>UPDATE CANNOT BE MADE TO ID, IF YOU DONT PUT ANYTHING, IT WILL NOT BE UPDATED</p>
-        
-                <div class="boton_div">
-                    <a href="/admin" target="_self">
-                        ADMIN
-                    </a>
-                </div>
-        
-                <div id="error" class="hidden">
-                    <p class="error_text" id="error_text">
-        
-                    </p>
-                </div>
-        
-                <div>
-                    <h2>UPDATE MOTHERBOARD</h2>
-        
-                    <form id="form_motherboard">
-                        <select name="motherboard" id="motherboard_id">
-                            <option value="" hidden selected>SELECT AN OPTION</option>
-                            {% for motherboard in motherboards %}
-                            <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
-                            {% endfor %}
-                        </select>
-        
-                        <p>NAME</p>
-                        <input type="text" id="motherboard_name" placeholder="name"/>
-        
-                        <p>PRICE</p>
-                        <input type="number" id="motherboard_price" step="0.01" placeholder="price"/>
-        
-                        <p>DESCRIPTION</p>
-                        <input type="text" id="motherboard_description" placeholder="description"/>
-        
-                        <input type="submit" value="Submit"/>
-                    </form>
-                </div>
-        
-                <div>
-                    <h2>UPDATE COMPONENT</h2>
-        
-                    <form id="form_component">
-                        <select name="component" id="component_id">
-                            <option value="" hidden selected>SELECT AN OPTION</option>
-                            {% for component in components %}
-                            <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
-                            {% endfor %}
-                        </select>
-        
-                        <p>NAME</p>
-                        <input type="text" id="component_name" placeholder="name"/>
-        
-                        <p>PRICE</p>
-                        <input type="number" id="component_price" step="0.01" placeholder="price"/>
-        
-                        <p>DESCRIPTION</p>
-                        <input type="text" id="component_description" placeholder="description"/>
-        
-                        <p>COMPONENT TYPE</p>
-                        <select id="component_type">
-                            <option value="" hidden selected>SELECT AN OPTION</option>
-                            <option value="RAM">RAM (Random Access Memory)</option>
-                            <option value="SSD">SSD (Solid State Drive)</option>
-                            <option value="HDD">HDD (Hard Drive Disk)</option>
-                            <option value="CPU">CPU (Central Processing Unit)</option>
-                            <option value="GPU">GPU (Graphics Processing Unit)</option>
-                            <option value="PSU">PSU (Power Supply Unit)</option>
-                            <option value="PC Cooling">PC Cooling</option>
-                            <option value="Peripheral">Peripheral</option>
-                        </select>
-        
-                        <input type="submit" value="Submit"/>
-                    </form>
-                </div>
+
+                <div class="box_Admin_r">
+                    <div id="error" class="hidden">
+                        <p class="error_text_2" id="error_text">
+            
+                        </p>
+                    </div>
+                </div>        
             </div>
         </div>
 

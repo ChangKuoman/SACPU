@@ -31,8 +31,8 @@ anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
 
 # configurations
-app = Flask(__name__, static_folder=chang_static_path)
-app.config['SQLALCHEMY_DATABASE_URI'] = chang_uri
+app = Flask(__name__, static_folder=anderson_static_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = anderson_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'papasfritas15'
 db = SQLAlchemy(app)
@@ -160,7 +160,12 @@ def register_create():
 @app.route('/simulator', methods=['POST', 'GET'])
 @login_required
 def simulator():
-    return render_template('simulator.html', motherboards=MotherBoard.query.all())
+
+    if current_user.role == "admin":
+        admin = True
+    else:
+        admin = False
+    return render_template('simulator.html', motherboards=MotherBoard.query.all(), admin=admin)
 
 
 # simulator motherboard
@@ -191,8 +196,7 @@ def simulator_motherboard(motherboard):
     
     if error:
         abort(400)
-    else:
-        return render_template('simulator_motherboard.html',
+    return render_template('simulator_motherboard.html',
             motherboard=MotherBoard.query.filter_by(id=int(motherboard)).first(),
             list_RAM=list_RAM,
             list_SSD=list_SSD,
@@ -201,7 +205,7 @@ def simulator_motherboard(motherboard):
             list_GPU=list_GPU,
             list_PSU=list_PSU,
             list_PC_Cooling=list_PC_Cooling,
-            list_Peripheral=list_Peripheral)
+            list_Peripheral=list_Peripheral,)
 
 @app.route('/simulator/motherboard', methods=['POST', 'GET'])
 @login_required

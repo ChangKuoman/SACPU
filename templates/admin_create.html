@@ -15,8 +15,11 @@
             </a>
             <a href="/" target="_self" class="home_button">
                 <h1>
-                    SACPU - Simulador de Armado de CPU
+                    SACPU - PC BUILD SIMULATOR
                 </h1>
+            </a>
+            <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
+                LOGOUT
             </a>
         </header>
 
@@ -34,83 +37,89 @@
                 <a class="boton_admin" href="/admin/update" target="_self">
                     EDITAR PRODUCTOS
                 </a>
+                <a class="boton_admin_to_simulator" href="/simulator" target="_self">
+                    SIMULATOR
+                </a>
             </div>
 
-            <div>
-                <div id="error" class="hidden">
-                    <p class="error_text" id="error_text">
-        
-                    </p>
+            <div class="contenedor_cambiosAdmin">
+                <div class="box_Admin_l">
+                    <div class="Enunciado">
+                        <h1>
+                            WHEN CREATING A PRODUCT ALL FIELDS MUST BE FILLED
+                        </h1>
+                    </div>
+
+                    <div>
+                        <h2>CREATE MOTHERBOARD</h2>
+            
+                        <form id="form_motherboard">
+                            <p>MOTHERBOARD NAME</p>
+                            <input class="mod_imput_Admin" type="text" id="motherboard_name"/>
+                            <P>MOTHERBOARD DESCRIPTION</P>
+                            <input class="mod_imput_Admin" type="text" id="motherboard_description"/>
+                            <P>PRICE</P>
+                            <input class="mod_imput_Admin" type="number" id="motherboard_price" step="0.01"/>
+                            <input class="boton_Acreate" type="submit" value="CREATE"/>
+                        </form>
+                    </div>
+            
+                    <div>
+                        <h2>CREATE COMPONENT</h2>
+            
+                        <form id="form_component">
+                            <p>COMPONENT NAME</p>
+                            <input class="mod_imput_Admin" type="text" id="component_name"/>
+                            <P>COMPONENT DESCRIPTION</P>
+                            <input class="mod_imput_Admin" type="text" id="component_description"/>
+                            <P>COMPONENT PRICE</P>
+                            <select class="mod_select"  id="component_type">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
+                                <option value="RAM">RAM (Random Access Memory)</option>
+                                <option value="SSD">SSD (Solid State Drive)</option>
+                                <option value="HDD">HDD (Hard Drive Disk)</option>
+                                <option value="CPU">CPU (Central Processing Unit)</option>
+                                <option value="GPU">GPU (Graphics Processing Unit)</option>
+                                <option value="PSU">PSU (Power Supply Unit)</option>
+                                <option value="PC Cooling">PC Cooling</option>
+                                <option value="Peripheral">Peripheral</option>
+                            </select>
+                            <P>PRICE</P>
+                            <input class="mod_imput_Admin" type="number" id="component_price" step="0.01"/>
+                            <input class="boton_Acreate" type="submit" value="CREATE"/>
+                        </form>
+                    </div>
+            
+                    <div>
+                        <h2>CREATE COMPATIBLE</h2>
+                        
+                        <form id="form_compatible">
+                            <p>MOTHERBOARD</p>
+                            <select class="mod_select"  name="motherboard" id="id_motherboard">
+                                {% for motherboard in motherboards %}
+                                <option value={{motherboard.id}}>{{motherboard.name}}</option>
+                                {% endfor %}
+                            </select>
+            
+                            <p>COMPONENT</p>
+                            <select class="mod_imput_Admin" class="mod_select" name="component" id="id_component">
+                                {% for component in components %}
+                                <option value={{component.id}}>{{component.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <input class="boton_Acreate" type="submit" value="CREATE"/>
+                        </form>
+                    </div>
                 </div>
-        
-                <div class="boton_div">
-                    <a href="/admin" target="_self">
-                        ADMIN
-                    </a>
+                <div class="box_Admin_r">
+                    <div id="error" class="hidden">
+                        <p class="error_text_2" id="error_text">
+            
+                        </p>
+                    </div>
+
                 </div>
-        
-                <div>
-                    <h2>CREATE MOTHERBOARD</h2>
-        
-                    <form id="form_motherboard">
-                        <p>Nombre de la tarjeta madre</p>
-                        <input type="text" id="motherboard_name"/>
-                        <P>Descripción de la Tajeta Madre</P>
-                        <input type="text" id="motherboard_description"/>
-                        <P>Precio</P>
-                        <input type="number" id="motherboard_price" step="0.01"/>
-                        <input type="submit" value="Submit"/>
-                    </form>
-                </div>
-        
-                <div>
-                    <h2>CREATE COMPONENT</h2>
-        
-                    <form id="form_component">
-                        <p>Nombre del Componente</p>
-                        <input type="text" id="component_name"/>
-                        <P>Descripción del Componente</P>
-                        <input type="text" id="component_description"/>
-                        <P>Tipo de Componente</P>
-                        <select id="component_type">
-                            <option value="" hidden selected>SELECT AN OPTION</option>
-                            <option value="RAM">RAM (Random Access Memory)</option>
-                            <option value="SSD">SSD (Solid State Drive)</option>
-                            <option value="HDD">HDD (Hard Drive Disk)</option>
-                            <option value="CPU">CPU (Central Processing Unit)</option>
-                            <option value="GPU">GPU (Graphics Processing Unit)</option>
-                            <option value="PSU">PSU (Power Supply Unit)</option>
-                            <option value="PC Cooling">PC Cooling</option>
-                            <option value="Peripheral">Peripheral</option>
-                        </select>
-                        <P>Precio</P>
-                        <input type="number" id="component_price" step="0.01"/>
-                        <input type="submit" value="Submit"/>
-                    </form>
-                </div>
-        
-                <div>
-                    <h2>CREATE COMPATIBLE</h2>
-                    
-                    <form id="form_compatible">
-                        <p>Motherboard</p>
-                        <select name="motherboard" id="id_motherboard">
-                            <option value="" hidden selected>SELECT AN OPTION</option>
-                            {% for motherboard in motherboards %}
-                            <option value={{motherboard.id}}>{{motherboard.name}}</option>
-                            {% endfor %}
-                        </select>
-        
-                        <p>Component</p>
-                        <select name="component" id="id_component">
-                            <option value="" hidden selected>SELECT AN OPTION</option>
-                            {% for component in components %}
-                            <option value={{component.id}}>{{component.name}}</option>
-                            {% endfor %}
-                        </select>
-                        <input type="submit" value="Submit"/>
-                    </form>
-                </div>
+            
             </div>
         </div>
 
