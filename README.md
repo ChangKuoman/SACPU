@@ -90,21 +90,54 @@ python3 data_compatible.py
 ```
 
 ### Hosts
-localhost:5432
-puerto para la aplicación web: 5002
+
+Host de postgres: localhost (127.0.0.1)
+
+Puerto de postgres: 5432
+
+Host para la aplicación web: localhost (127.0.0.1)
+
+Puerto para la aplicación web: 5002
 
 ### Forma de autenticación
+
+Para la autenticación dentro de la aplicación web se creó un endpoint /register para el registro de usuarios. Se pide al usuario ingresar un username e ingresar dos veces una clave. El username es único y no puede repetirse en la base de datos, si lo hace, se mostrará al usuario un mensaje de que el username ya está en uso. Asimismo debe tener una longitud entre 6 y 20 caracteres. La clave coincidir las 2 veces que el usuario la ingresa, además pasa por un chequeo de seguridad en el que se pide que contenga 1 letra mayúscula, 1 letra minúscula, 1 dígito, 1 caracter especial y una longitud entre 6 y 20 caracteres. Las claves ingresadas a la base de datos son encriptadas mediante el uso de la librería bcrypt, para mantener la seguridad de los usuarios.
+
+El rol automático que se les dará a los usuarios que se registren es 'user', solo pudiendo acceder a ciertos endpoints relacionados a la simulación de la compra de componentes. El rol de 'admin' solo puede ser otorgado mediante un update en la base de datos. Este rol permite acceder al endpoint /admin y todas las funcionalidades dentro de ella como son la creación de productos, eliminación de los mismos y la actualización de las propiedades de los productos.
+
+Después de la creación del usuario en la base de datos la página redirige al endpoint /login para que el usuario ingrese poniendo su username y el pasword.
 
 ### Manejo de errores HTTP
 **500: Errores en el servidor**
 
+* Error 500: Internal Server Error
+    Al momento de que haya un error en el servidor, la aplicación web redirige a una página que muestra que se ha producido un error 500 y un botón para regresar a la página principal.
+
 **400: Errores en el cliente**
+
+* Error 404: Page not Found
+    
+    Si una página no se encuentra, la aplicación web redirige a una página que muestra que se ha producido un error 404 y un botón para regresar a la página principal.
+    
+* Error 401: Unauthorized
+    
+    Si el usuario trata de ingresar a un endpoint al que no tiene acceso, la aplicación web redirige a una página que muestra que se ha producido un error 401 y un botón para regresar a la página principal.
+    
+* Error 400: Bad Request
+   
+    Si ocurre una petición incorrecta por parte del usuario, la aplicación web redirige a una página que muestra que se ha producido un error 400 y un botón para regresar a la página principal.
 
 **300: Redirección**
 
+    En el desarrollo de la aplicación web, no se visto necesario implementar visualmente al usuario las respuestas de redirección.
+
 **200: Exitoso**
 
+    En el desarrollo de la aplicación web, no se visto necesario implementar visualmente al usuario las respuestas exitosas.
+
 **100: Informacional**
+
+    No se ha visto necesario que implementar respuestas informativas en la creación de la aplicación web.
 
 ### Deployment scripts
 
