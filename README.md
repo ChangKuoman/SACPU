@@ -1,6 +1,7 @@
-# SACPU - PC Build Simulator
+# <img src="https://user-images.githubusercontent.com/92172040/168483567-d59c8404-fe28-4a1d-80e1-c1e7eaafd230.png" alt="logoSACPU" width="35"/>  SACPU - PC Build Simulator
 
 ### Integrantes
+
 * Anderson Cárcamo (100%)
 * Susana Chang (100%)
 
