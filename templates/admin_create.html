@@ -19,7 +19,7 @@
                 </h1>
             </a>
             <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
-                LOGOUT
+                LOG OUT
             </a>
         </header>
 
@@ -29,13 +29,13 @@
                     HOME ADMIN
                 </a>
                 <a class="boton_admin" href="/admin/create" target="_self">
-                    CREAR PRODUCTOS
+                    CREATE PRODUCTS
                 </a>
                 <a class="boton_admin" href="/admin/delete" target="_self">
-                    ELIMINAR PRODUCTOS
+                    DELETE PRODUCTS
                 </a>
                 <a class="boton_admin" href="/admin/update" target="_self">
-                    EDITAR PRODUCTOS
+                    CHANGE PRODUCTS
                 </a>
                 <a class="boton_admin_to_simulator" href="/simulator" target="_self">
                     SIMULATOR
@@ -46,7 +46,7 @@
                 <div class="box_Admin_l">
                     <div class="Enunciado">
                         <h1>
-                            WHEN CREATING A PRODUCT ALL FIELDS MUST BE FILLED
+                            WHEN CREATING A PRODUCT, ALL FIELDS MUST BE FILLED
                         </h1>
                     </div>
 
@@ -58,7 +58,7 @@
                             <input class="mod_imput_Admin" type="text" id="motherboard_name"/>
                             <P>MOTHERBOARD DESCRIPTION</P>
                             <input class="mod_imput_Admin" type="text" id="motherboard_description"/>
-                            <P>PRICE</P>
+                            <P>MOTHERBOARD PRICE</P>
                             <input class="mod_imput_Admin" type="number" id="motherboard_price" step="0.01"/>
                             <input class="boton_Acreate" type="submit" value="CREATE"/>
                         </form>
@@ -72,7 +72,7 @@
                             <input class="mod_imput_Admin" type="text" id="component_name"/>
                             <P>COMPONENT DESCRIPTION</P>
                             <input class="mod_imput_Admin" type="text" id="component_description"/>
-                            <P>COMPONENT PRICE</P>
+                            <P>COMPONENT TYPE</P>
                             <select class="mod_select"  id="component_type">
                                 <option value="" hidden selected>SELECT AN OPTION</option>
                                 <option value="RAM">RAM (Random Access Memory)</option>
@@ -84,7 +84,7 @@
                                 <option value="PC Cooling">PC Cooling</option>
                                 <option value="Peripheral">Peripheral</option>
                             </select>
-                            <P>PRICE</P>
+                            <P>COMPONENT PRICE</P>
                             <input class="mod_imput_Admin" type="number" id="component_price" step="0.01"/>
                             <input class="boton_Acreate" type="submit" value="CREATE"/>
                         </form>

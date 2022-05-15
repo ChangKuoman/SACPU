@@ -19,7 +19,7 @@
                 </h1>
             </a>
             <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
-                LOGOUT
+                LOG OUT
             </a>
         </header>
 
@@ -29,13 +29,13 @@
                     HOME ADMIN
                 </a>
                 <a class="boton_admin" href="/admin/create" target="_self">
-                    CREAR PRODUCTOS
+                    CREATE PRODUCTS
                 </a>
                 <a class="boton_admin" href="/admin/delete" target="_self">
-                    ELIMINAR PRODUCTOS
+                    DELETE PRODUCTS
                 </a>
                 <a class="boton_admin" href="/admin/update" target="_self">
-                    EDITAR PRODUCTOS
+                    CHANGE PRODUCTS
                 </a>
                 <a class="boton_admin_to_simulator" href="/simulator" target="_self">
                     SIMULATOR
@@ -62,13 +62,13 @@
                                 {% endfor %}
                             </select>
             
-                            <p>NAME</p>
+                            <p>NEW NAME</p>
                             <input class="mod_imput_Admin" type="text" id="motherboard_name"/>
             
-                            <p>PRICE</p>
+                            <p>NEW PRICE</p>
                             <input class="mod_imput_Admin" type="number" id="motherboard_price" step="0.01"/>
             
-                            <p>DESCRIPTION</p>
+                            <p>NEW DESCRIPTION</p>
                             <input class="mod_imput_Admin" type="text" id="motherboard_description"/>
             
                             <input class="boton_Aupdate" type="submit" value="UPDATE"/>
@@ -86,16 +86,16 @@
                                 {% endfor %}
                             </select>
             
-                            <p>NAME</p>
+                            <p>NEW NAME</p>
                             <input class="mod_imput_Admin" type="text" id="component_name"/>
             
-                            <p>PRICE</p>
+                            <p>NEW PRICE</p>
                             <input class="mod_imput_Admin" type="number" id="component_price" step="0.01"/>
             
-                            <p>DESCRIPTION</p>
+                            <p>NEW DESCRIPTION</p>
                             <input class="mod_imput_Admin" type="text" id="component_description"/>
             
-                            <p>COMPONENT TYPE</p>
+                            <p>NEW COMPONENT TYPE</p>
                             <select class="mod_select" id="component_type">
                                 <option value="" hidden selected>SELECT AN OPTION</option>
                                 <option value="RAM">RAM (Random Access Memory)</option>
