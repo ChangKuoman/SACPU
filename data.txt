@@ -22,9 +22,3 @@
     * Microphone
     * Monitor
     * Speakers
-
-# attributes for User (not null)
-#   username:       string      (pk)
-#   password:       string
-#   role:           string      default: "user"
-#   dateCreated:    DateTime    default: func.now()

@@ -25,9 +25,9 @@ class MotherBoard(db.Model):
     name = db.Column(db.String(), nullable=False, unique=True)
     description = db.Column(db.Text(), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
     date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
+    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
 
     def __repr__(self):
         return f'motherboard: {self.name}'
@@ -40,9 +40,9 @@ class Component(db.Model):
     component_type = db.Column(db.String(), nullable=False)
     description = db.Column(db.Text(), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
     date_modified = db.Column(db.DateTime, nullable=False, default=func.now())
-    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
+    modify_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
 
     def __repr__(self):
         return f'component: {self.name}'
@@ -52,6 +52,6 @@ class Compatible(db.Model):
     id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), primary_key=True)
     id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
     date_created = db.Column(db.DateTime, nullable=False, default=func.now())
-    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default="1")
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
