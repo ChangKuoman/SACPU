@@ -1,6 +1,26 @@
 <html>
-    <body>
-        
+    <head>
+        <title>
+            SACPU - Simulador de Armado de CPU
+        </title>
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
+    </head>
+    <body class="fondo">
+        <header class="header">
+            <a class="a_icono" href="/" target="_self">
+                <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            </a>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - PC BUILD SIMULATOR
+                </h1>
+            </a>
+            <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
+                LOGOUT
+            </a>
+        </header>
 
         {% for component in components %}
         <!--Poner a la izq-->

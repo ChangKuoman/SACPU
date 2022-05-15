@@ -136,6 +136,12 @@ html{
     flex-direction: column;
     margin: 20px;
     padding: 10px;
+
+    margin-left: 320px;
+    margin-right: 320px;
+
+    border-radius: 10px 10px;
+    background: whitesmoke;
 }
 
 .contenedor_admin{
@@ -340,6 +346,32 @@ html{
 
 .boton_Aupdate:hover{
     background-color: #2051aaea;
+}
+
+.boton_to_home{
+    max-width: 100%;
+
+    text-decoration: none;
+    padding: 12px;
+    margin: 12px;
+
+    border: none;
+
+    font-weight: 700;
+    background: aliceblue;
+
+    border-radius: 3px 3px;
+
+    color: #333;
+}
+
+.reset{
+    border: none;
+
+    text-decoration: none;
+    background: none;
+
+    cursor: pointer;
 }
 
 /*CAJAS*/
@@ -712,6 +744,17 @@ html{
     font-weight: 700;
 
     background-color: aliceblue;
+}
+
+.row_centrado{
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+}
+
+.mod_expensive{
+    width: 90%;
 }
 
 /*IMAGENES*/

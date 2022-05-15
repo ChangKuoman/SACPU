@@ -40,12 +40,17 @@
                 </div>
                 
                 <div class="text_simulator">
-                    <div>
-                        <h2 class="titulos">YOUR MOTHERBOARD: {{motherboard.name}}</h2>
-                        <div class="descripcion_producto">
-                            <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
+                    <div class="row_centrado">
+                        <div class="mod_expensive">
+                            <h2 class="titulos">YOUR MOTHERBOARD: {{motherboard.name}}</h2>
+                            <div class="descripcion_producto">
+                                <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
+                            </div>
                         </div>
-                        <input type="reset" id="reset-button" value="RESET"/>
+                    
+                        <button class="reset" id="reset-button">
+                            <img src="/static/img/boton_reset.png" width="20px" height="20px">
+                        </button>
                     </div>
                     
                     <form id="form" name="form" class="text_simulator_part2">
