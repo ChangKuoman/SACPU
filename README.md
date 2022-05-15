@@ -3,8 +3,6 @@
 ### Integrantes
 * Anderson Cárcamo (100%)
 * Susana Chang (100%)
-* Mishelle Villareal (0%)
-* Leandro Machaca (0%)
 
 ### Descripción del proyecto
 Nuestro proyecto es una aplicación web realizada con el _micro_ Framework Flask que permite el simulado de compra de una computadora teniendo en cuenta como pieza base la tarjeta madre y la compatibilidad de esta con los diferentes componentes. La información de la base de datos está basada en direntes páginas web de compra de tecnología especializada en computadoras como LoginStore, y marcas propias como MSI, AMD, Intel, entre otros.
@@ -101,7 +99,7 @@ Puerto para la aplicación web: 5002
 
 ### Forma de autenticación
 
-Para la autenticación dentro de la aplicación web se creó un endpoint /register para el registro de usuarios. Se pide al usuario ingresar un username e ingresar dos veces una clave. El username es único y no puede repetirse en la base de datos, si lo hace, se mostrará al usuario un mensaje de que el username ya está en uso. Asimismo debe tener una longitud entre 6 y 20 caracteres. La clave coincidir las 2 veces que el usuario la ingresa, además pasa por un chequeo de seguridad en el que se pide que contenga 1 letra mayúscula, 1 letra minúscula, 1 dígito, 1 caracter especial y una longitud entre 6 y 20 caracteres. Las claves ingresadas a la base de datos son encriptadas mediante el uso de la librería bcrypt, para mantener la seguridad de los usuarios.
+Para la autenticación dentro de la aplicación web se creó un endpoint /register para el registro de usuarios. Se pide al usuario ingresar un username e ingresar dos veces una clave. El username es único y no puede repetirse en la base de datos, si lo hace, se mostrará al usuario un mensaje de que el username ya está en uso. Asimismo debe tener una longitud entre 4 y 20 caracteres. La clave coincidir las 2 veces que el usuario la ingresa, además pasa por un chequeo de seguridad en el que se pide que contenga 1 letra mayúscula, 1 letra minúscula, 1 dígito, 1 caracter especial y una longitud entre 6 y 20 caracteres. Las claves ingresadas a la base de datos son encriptadas mediante el uso de la librería bcrypt, para mantener la seguridad de los usuarios.
 
 El rol automático que se les dará a los usuarios que se registren es 'user', solo pudiendo acceder a ciertos endpoints relacionados a la simulación de la compra de componentes. El rol de 'admin' solo puede ser otorgado mediante un update en la base de datos. Este rol permite acceder al endpoint /admin y todas las funcionalidades dentro de ella como son la creación de productos, eliminación de los mismos y la actualización de las propiedades de los productos.
 
@@ -137,7 +135,7 @@ Después de la creación del usuario en la base de datos la página redirige al 
 
 **100: Informacional**
 
-    No se ha visto necesario que implementar respuestas informativas en la creación de la aplicación web.
+    En el desarrollo de la aplicación web, no se visto necesario implementar visualmente al usuario las respuestas informacionales.
 
 ### Deployment scripts
 
