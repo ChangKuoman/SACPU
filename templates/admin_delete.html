@@ -55,6 +55,7 @@
             
                         <form id="form_motherboard">
                             <select class="mod_select" name="motherboard" id="id_motherboard">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for motherboard in motherboards %}
                                 <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
                                 {% endfor %}
@@ -68,6 +69,7 @@
             
                         <form id="form_component">
                             <select class="mod_select" name="component" id="id_component">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for component in components %}
                                 <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
                                 {% endfor %}
@@ -82,6 +84,7 @@
                         <form id="form_compatible">
             
                             <select class="mod_select" name="compatible" id="id_compatible">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for compatible in compatibles %}
                                 <option value="{{compatible[1].id}} {{compatible[2].id}}" id="mc-{{compatible[1].id}}-{{compatible[2].id}}" class="m-{{compatible[1].id}} c-{{compatible[2].id}}">
                                     Motherboard: {{compatible[1].name}} - Componente: {{compatible[2].name}}
@@ -93,6 +96,7 @@
                         </form>
                     </div>
                 </div>
+
                 <div class="box_Admin_r">
                     <div id="error"class="hidden">
                         <p class="error_text_2" id="error_text">
@@ -101,6 +105,7 @@
                 </div>
         
                 
+
             </div>
         </div>
 

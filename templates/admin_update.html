@@ -41,6 +41,7 @@
                     SIMULATOR
                 </a>
             </div>
+
             
             <div class="contenedor_cambiosAdmin">
                 <div class="box_Admin_l">
@@ -55,6 +56,7 @@
             
                         <form id="form_motherboard">
                             <select class="mod_select" name="motherboard" id="motherboard_id">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for motherboard in motherboards %}
                                 <option value={{motherboard.id}} id="m-{{motherboard.id}}">{{motherboard.name}}</option>
                                 {% endfor %}
@@ -78,6 +80,7 @@
             
                         <form id="form_component">
                             <select class="mod_select" name="component" id="component_id">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 {% for component in components %}
                                 <option value={{component.id}} id="c-{{component.id}}">{{component.name}}</option>
                                 {% endfor %}
@@ -94,6 +97,7 @@
             
                             <p>COMPONENT TYPE</p>
                             <select class="mod_select" id="component_type">
+                                <option value="" hidden selected>SELECT AN OPTION</option>
                                 <option value="RAM">RAM (Random Access Memory)</option>
                                 <option value="SSD">SSD (Solid State Drive)</option>
                                 <option value="HDD">HDD (Hard Drive Disk)</option>
@@ -107,6 +111,7 @@
                             <input class="boton_Aupdate" type="submit" value="UPDATE"/>
                         </form>
                     </div>
+
                 </div>
 
                 <div class="box_Admin_r">

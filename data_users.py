@@ -1,4 +1,8 @@
-from app import db, User
+from models import User, db
+from app import create_app
+
+app = create_app()
+app.app_context().push()
 
 # attributes for User (not null)
 #   username:       string      (pk)
@@ -6,24 +10,15 @@ from app import db, User
 #   role:           string      default: "user"
 #   dateCreated:    DateTime    default: func.now()
 
-u1 = User(
-    username="chang",
-    password="aA.123",
+user = User(
+    id=0,
+    username="admin",
+    password="....---.-...-",
     role="admin"
 )
 
-u2 = User(
-    username="bibiepiro",
-    password="Bbcita-2004"
-)
-
-u3 = User(
-    username="brigitte",
-    password="Faraon.1"
-)
-
 try:
-    db.session.add_all([u1, u2])
+    db.session.add(user)
     db.session.commit()
 except Exception as e:
     print(e)

@@ -45,8 +45,9 @@
                         <div class="descripcion_producto">
                             <p class="description_list">MotherBoard Price: {{motherboard.price}}</p>
                         </div>
+                        <input type="reset" id="reset-button" value="RESET"/>
                     </div>
-            
+                    
                     <form id="form" name="form" class="text_simulator_part2">
                         <h1 class="titulos_2">
                             COMPONENTS THAT NEED COMPATIBILITY: 
@@ -202,13 +203,157 @@
                         <p> TOTAL: S/.  </p>
                         <p id="total_price">{{motherboard.price}}</p>
                     </div>
+                    <!--
                     <input class="boton_comprar" type="submit" value="BUY"/>
+                    <button class="boton_comprar" id="boton-compra">BUY</button>
+                    -->
+                    <input type="hidden" id="motherboard" value="{{motherboard.id}}"/>
+                    <input class="boton_comprar" type="submit" id="boton-compra" value="BUY"/>
+
                 </div>
             </div>
         </div>
-        <!--['RAM', 'SSD', 'HDD', 'CPU', 'GPU', 'PSU', 'PC Cooling', 'Peripheral']-->
     </body>
 
     <!--script must be here-->
+    <script>
+        document.getElementById("reset-button").onclick = function(e){
+            e.preventDefault();
+            document.getElementById("form").reset();
+            const elem = document.getElementById("shopping_items");
+            
+            while (elem.lastChild.tagName == 'LI'){
+                elem.removeChild(elem.lastChild);
+            }
+
+        }
+    </script>
+
+    <script>
+        document.getElementById("boton-compra").onclick = function(e){
+            e.preventDefault();
+            // motherboard - input hidden
+            const motherboardInput = document.getElementById("motherboard");
+            // radio input - name
+            const psu_list = document.getElementsByName('psu');
+            const cpu_list = document.getElementsByName('cpu');
+            const hdd_list = document.getElementsByName('hdd');
+            const ram_list = document.getElementsByName('ram');
+            const ssd_list = document.getElementsByName('ssd');
+            const gpu_list = document.getElementsByName('gpu');
+            const pc_cooling_list = document.getElementsByName('pc_cooling');
+            // peripherals - checkbox
+            const peripherals_list = document.getElementsByName('peripherals');
+
+            // values
+            const motherboard = motherboardInput.value;
+            let psu = 0;
+            let cpu = 0;
+            let hdd = 0;
+            let ram = 0;
+            let ssd = 0;
+            let gpu = 0;
+            let pc_cooling = 0;
+
+            let peripherals = []; // ? should have initiated
+
+            // for psu
+            for (i = 0; i < psu_list.length; i++){
+                const elem = psu_list[i];
+                if (elem.checked){
+                    psu = elem.value;
+                    break;
+                }
+            }
+            // for cpu
+            for (i = 0; i < cpu_list.length; i++){
+                const elem = cpu_list[i];
+                if (elem.checked){
+                    cpu = elem.value;
+                    break;
+                }
+            }
+            // for hdd
+            for (i = 0; i < hdd_list.length; i++){
+                const elem = hdd_list[i];
+                if (elem.checked){
+                    hdd = elem.value;
+                    break;
+                }
+            }
+            // for ram
+            for (i = 0; i < ram_list.length; i++){
+                const elem = ram_list[i];
+                if (elem.checked){
+                    ram = elem.value;
+                    break;
+                }
+            }
+            // for ssd
+            for (i = 0; i < ssd_list.length; i++){
+                const elem = ssd_list[i];
+                if (elem.checked){
+                    ssd = elem.value;
+                    break;
+                }
+            }
+            // for gpu
+            for (i = 0; i < gpu_list.length; i++){
+                const elem = gpu_list[i];
+                if (elem.checked){
+                    gpu = elem.value;
+                    break;
+                }
+            }
+            // for pc_cooling
+            for (i = 0; i < pc_cooling_list.length; i++){
+                const elem = pc_cooling_list[i];
+                if (elem.checked){
+                    pc_cooling = elem.value;
+                    break;
+                }
+            }
+            // for peripherals
+            for (i = 0; i < peripherals_list.length; i++){
+                const elem = peripherals_list[i];
+                if (elem.checked){
+                    peripherals.push(parseInt(elem.id));
+                }
+            }
+            console.log(psu);
+            // fetch
+            fetch('/simulator/buy', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'motherboard': motherboard,
+                    'psu': psu,
+                    'cpu': cpu,
+                    'hdd': hdd,
+                    'ram': ram,
+                    'ssd': ssd,
+                    'gpu': gpu,
+                    'pc_cooling': pc_cooling,
+                    'peripherals': peripherals
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            .then(function(jsonResponse){
+                console.log(jsonResponse);
+                if (jsonResponse['error']){
+                    window.location.href = '/errors/500';
+                }
+                else{
+                    window.location.href = '/buy/' + parseFloat(jsonResponse['precio_total']) + "/" + JSON.stringify(jsonResponse['matriz']);
+                }
+
+
+            }).catch(function(){
+                console.log('something went wrong buy');
+            });
+        }
+    </script>
+
     <script src="/static/js/simulator_motherboard.js"></script>
 </html>
