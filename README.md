@@ -91,7 +91,7 @@ python3 data_components.py
 ``` bash
 python3 data_compatible.py
 ```
-### Informacion de requests y responses de cada endpoint en el sistema
+### Información de requests y responses de cada endpoint en el sistema
 
 * /
 * /logout
