@@ -57,6 +57,10 @@ Teniendo la base de datos creada, en el archivo main.py se debe cambiar el URI. 
 ``` python
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://usuario:clave@host:puerto/sacpu'
 ```
+Ahora en tu terminal crear el ambiente virtualizado.
+```
+python3 -m venv virtualenv
+```
 
 Tener en cuenta que se deben importar las librerías usadas en el pyotecto (requirements.txt) en tu ambiente virtualizado.
 
