@@ -91,6 +91,30 @@ python3 data_components.py
 ``` bash
 python3 data_compatible.py
 ```
+### Informaciñon de requests y responses de cada endpoint en el sistema
+
+* /
+* /logout
+* /login
+* /login/enter
+* /register
+* /register/create
+* /simulator
+* /simulator/motherboard
+* /simulator/<motherboard>
+* /admin
+* /admin/<action>
+* /admin/create/motherboard [POST, GET]
+* /admin/create/component [POST, GET]
+* /admin/create/compatible [POST, GET]
+* /admin/delete/motherboard [POST, GET]
+* /admin/delete/component
+* /admin/delete/compatible
+* /admin/update/motherboard
+* /admin/update/component
+* /admin/update/compatible
+* /simulator/buy
+* /simulator/<precio_total>/<lista>
 
 ### Hosts
 
