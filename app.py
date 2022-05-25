@@ -1,5 +1,4 @@
 # imports
-from crypt import methods
 from flask import (
     jsonify,
     Flask,
@@ -25,7 +24,7 @@ import bcrypt
 
 # constants
 anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
-chang_static_path = "/home/chang/Escritorio/sacpu3/SACPU/templates/static"
+chang_static_path = "D:/2 UTEC/Desarrollo Basado en Plataformas (CS2031)/SACPU/templates/static"
 
 anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
@@ -37,20 +36,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_POOL_SIZE'] = 20
 app.config['SECRET_KEY'] = 'papasfritas15'
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # models
-from models import (
-    db,
-    User,
-    MotherBoard,
-    Component,
-    Compatible
-)
+with app.app_context():
+    from models import (
+        db,
+        User,
+        MotherBoard,
+        Component,
+        Compatible,
+        Simulation,
+        SimulationComponent
+    )
+migrate = Migrate(app, db)
 
 # functions
 from functions import (
