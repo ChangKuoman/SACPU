@@ -369,8 +369,12 @@ def create_component():
                 db.session.add(component)
                 db.session.commit()
 
-                response['child_name'] = component_name
-                response['child_id'] = component.id
+                if component_type in ['RAM', 'SSD', 'GPU', 'PC Cooling']:
+                    response['has_child'] = True
+                    response['child_name'] = component_name
+                    response['child_id'] = component.id
+                else:
+                    response['has_child'] = False
         except Exception as e:
             response['error'] = True
             print(e)
@@ -427,10 +431,20 @@ def delete_motherboard():
             response['invalid_register'] = "You must choose a MotherBoard"
         else:
             # necesario primero eliminar dependecias SI existen
+            # simulation component & simulation
+            query = Simulation.query.filter_by(id_motherboard=id_motherboard)
+
+            for simulation in query: 
+                SimulationComponent.query.filter_by(id_simulation=simulation.id).delete()
+            db.session.commit()
+            query.delete()
+            db.session.commit()
+
+            # compatible
             query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
             query1.delete()
             db.session.commit()
-            
+
             query2 = MotherBoard.query.filter_by(id=id_motherboard)
 
             if query2.all() == []:
@@ -461,7 +475,24 @@ def delete_component():
         if id_component == '':
             response['invalid_register'] = "You must choose a Component"
         else:
-        # necesario primero eliminar dependecias SI existen
+            # necesario primero eliminar dependecias SI existen
+            # simulation component & simulation
+            query = SimulationComponent.query.filter_by(id_component=id_component)
+            
+            query_list = []
+            for simulation_component in query: 
+                query_list.append(Simulation.query.filter_by(id=simulation_component.id_simulation))
+
+            for querys in query_list:
+                for simulation in querys:
+                    SimulationComponent.query.filter_by(id_simulation = simulation.id).delete()
+            db.session.commit()
+
+            for simulation in query_list:
+                simulation.delete()
+            db.session.commit()
+
+            # compatible
             query1 = Compatible.query.filter_by(id_component=id_component)
             query1.delete()
             db.session.commit()
