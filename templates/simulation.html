@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <title>
+            SACPU - Simulador de Armado de CPU
+        </title>
+        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/css/style2.css">
+        <meta name="viewport" content="widht=device-widht, user-scalable=no, initial-scale=1.0, maximun-scale=1.0, minimun-scale=1.0">
+    </head>
+    <body class="fondo">
+        <header class="header">
+            <a class="a_icono" href="/" target="_self">
+                <img class="icono" src="/static/img/favicon.ico" alt="Icono" width="64px" height="64px">
+            </a>
+            <a href="/" target="_self" class="home_button">
+                <h1>
+                    SACPU - PC BUILD SIMULATOR
+                </h1>
+            </a>
+            <a class="caja_boton" href="{{url_for('logout')}}" target="_self">
+                LOG OUT
+            </a>
+        </header>
+        <div class="center">
+            <div>
+                <p class="titulos_3">
+                    YOUR SIMULATION HAS ENDED. YOUR BUILT PC WOULD BE:
+                </p>
+            </div>
+
+            <div class="orden_producto">
+                <div class="center_2">
+                    <img src="/static/img/pc_con_gatos.jpg">
+                </div>
+                
+                <div>
+                    <div class="row_centrado">
+                        <div class="description_p">
+                            {{motherboard.name}}
+                        </div>
+                        <div class="precio_p">
+                            S/. {{motherboard.price}}
+                        </div>
+                    </div>
+
+                    {% for component in components %}
+                    <div class="row_centrado">
+                        <div class="description_p">
+                            {{component.name}}
+                        </div>
+                        <div class="precio_p">
+                            S/. {{component.price}}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row_centrado_2">
+                    <div class="description_p">
+                        TOTAL PRICE: 
+                    </div>
+                    <div class="precio_p"> 
+                        S/. {{simulation.total_price}}
+                    </div>
+                </div>
+
+                
+            </div>
+            <a class="boton_regresar" href="/simulator" target="_self">
+                ↩ BACK
+            </a>
+
+        </div>
+    </body>
+</html>

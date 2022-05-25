@@ -350,7 +350,8 @@
                     window.location.href = '/errors/500';
                 }
                 else{
-                    window.location.href = '/buy/' + parseFloat(jsonResponse['precio_total']) + "/" + JSON.stringify(jsonResponse['matriz']);
+                    //window.location.href = '/buy/' + parseFloat(jsonResponse['precio_total']) + "/" + JSON.stringify(jsonResponse['matriz']);
+                    window.location.href = '/simulation/' + jsonResponse['id_simulation'];
                 }
 
 

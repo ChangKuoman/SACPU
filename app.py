@@ -1,4 +1,5 @@
 # imports
+from typing import final
 from flask import (
     jsonify,
     Flask,
@@ -663,6 +664,7 @@ def simulator_buy():
         pc_cooling = request.get_json()['pc_cooling']
         peripherals = request.get_json()['peripherals']
 
+        """
         precio_total = verificar_todo(motherboard, MotherBoard, matriz, precio_total)
         precio_total = verificar_todo(psu, Component, matriz, precio_total)
         precio_total = verificar_todo(cpu, Component, matriz, precio_total)
@@ -674,10 +676,36 @@ def simulator_buy():
 
         for peripheral in peripherals:
             precio_total = verificar_todo(peripheral, Component, matriz, precio_total)
+        """
+        simulation = Simulation(id_motherboard=motherboard, create_by=current_user.id)
+        db.session.add(simulation)
 
+        components_list_verified = []
+        total_price = MotherBoard.query.get(motherboard).price
 
-        response['precio_total'] = round(precio_total, 2)
-        response['matriz'] = matriz
+        def check_component(component_id, components_list_verified):
+            if component_id == 0:
+                pass
+            if Component.query.get(component_id) is None:
+                pass
+            else:
+                components_list_verified.append(component_id)
+        
+        components_list = peripherals + [psu] + [cpu] + [hdd] + [ram] + [ssd] + [gpu] + [pc_cooling]
+        for component in components_list:
+            check_component(component, components_list_verified)
+        
+        for component in components_list_verified:
+            total_price += Component.query.get(component).price
+            db.session.add(SimulationComponent(id_simulation=simulation.id, id_component=component))
+
+        simulation.total_price = total_price
+
+        db.session.commit()
+
+        response['id_simulation'] = simulation.id
+#        response['precio_total'] = round(precio_total, 2)
+#        response['matriz'] = matriz
 
     except Exception as e:
         response['error'] = True
@@ -687,6 +715,37 @@ def simulator_buy():
         db.session.close()
 
     return jsonify(response)
+
+@app.route('/simulation/<id_simulation>')
+@login_required
+def simulation(id_simulation):
+    try:
+        # getting the simulation
+        simulation = Simulation.query.get(id_simulation)
+        # la simulacion no le pertence
+        if simulation.create_by != current_user.id:
+            abort(401)
+        # getting the motherboard from the simulation
+        motherboard = MotherBoard.query.get(simulation.id_motherboard)
+        # getting the id from components
+        simulation_components = SimulationComponent.query.filter_by(id_simulation = id_simulation)
+        # getting the components from id simulation_components
+        components = []
+        for component in simulation_components:
+            components.append(Component.query.get(component.id_component))
+
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        abort(500)
+    finally:
+        db.session.close()
+    
+    return render_template('simulation.html',
+        simulation=simulation,
+        motherboard=motherboard,
+        components=components
+    )
 
 @app.route('/buy/<precio_total>/<lista>')
 @login_required
