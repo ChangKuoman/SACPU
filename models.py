@@ -55,3 +55,20 @@ class Compatible(db.Model):
     create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
     def __repr__(self):
         return f'compatible: {self.id_motherboard}-{self.id_component}'
+
+class Simulation(db.Model):
+    __tablename__ = 'simulation'
+    id = db.Column(db.Integer, primary_key=True)
+    id_motherboard = db.Column(db.Integer, ForeignKey('motherboard.id'), nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=func.now())
+    create_by = db.Column(db.Integer, ForeignKey('userinfo.id'), nullable=False, default=0)
+    total_price = db.Column(db.Float, nullable=False, default=0.0)
+    def __repr__(self):
+        return f'simulation: {self.id}'
+
+class SimulationComponent(db.Model):
+    __tablename__ = 'simulation_components'
+    id_simulation = db.Column(db.Integer, ForeignKey('simulation.id'), primary_key=True)
+    id_component = db.Column(db.Integer, ForeignKey('component.id'), primary_key=True)
+    def __repr__(self):
+        return f'simulation-compatible: {self.id_simulation}-{self.id_component}'

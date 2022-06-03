@@ -1,5 +1,5 @@
 # imports
-from crypt import methods
+from typing import final
 from flask import (
     jsonify,
     Flask,
@@ -25,7 +25,7 @@ import bcrypt
 
 # constants
 anderson_static_path = "/home/anderson/Des_Bas_Plat/Project_SACPU/SACPU/templates/static"
-chang_static_path = "/home/chang/Escritorio/sacpu3/SACPU/templates/static"
+chang_static_path = "D:/2 UTEC/Desarrollo Basado en Plataformas (CS2031)/SACPU/templates/static"
 
 anderson_uri = 'postgresql://postgres:231102DA@localhost:5432/sacpu'
 chang_uri ='postgresql://postgres:admin@localhost:5432/sacpu'
@@ -37,20 +37,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_POOL_SIZE'] = 20
 app.config['SECRET_KEY'] = 'papasfritas15'
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # models
-from models import (
-    db,
-    User,
-    MotherBoard,
-    Component,
-    Compatible
-)
+with app.app_context():
+    from models import (
+        db,
+        User,
+        MotherBoard,
+        Component,
+        Compatible,
+        Simulation,
+        SimulationComponent
+    )
+migrate = Migrate(app, db)
 
 # functions
 from functions import (
@@ -366,8 +369,12 @@ def create_component():
                 db.session.add(component)
                 db.session.commit()
 
-                response['child_name'] = component_name
-                response['child_id'] = component.id
+                if component_type in ['RAM', 'SSD', 'GPU', 'PC Cooling']:
+                    response['has_child'] = True
+                    response['child_name'] = component_name
+                    response['child_id'] = component.id
+                else:
+                    response['has_child'] = False
         except Exception as e:
             response['error'] = True
             print(e)
@@ -424,10 +431,20 @@ def delete_motherboard():
             response['invalid_register'] = "You must choose a MotherBoard"
         else:
             # necesario primero eliminar dependecias SI existen
+            # simulation component & simulation
+            query = Simulation.query.filter_by(id_motherboard=id_motherboard)
+
+            for simulation in query: 
+                SimulationComponent.query.filter_by(id_simulation=simulation.id).delete()
+            db.session.commit()
+            query.delete()
+            db.session.commit()
+
+            # compatible
             query1 = Compatible.query.filter_by(id_motherboard=id_motherboard)
             query1.delete()
             db.session.commit()
-            
+
             query2 = MotherBoard.query.filter_by(id=id_motherboard)
 
             if query2.all() == []:
@@ -458,7 +475,24 @@ def delete_component():
         if id_component == '':
             response['invalid_register'] = "You must choose a Component"
         else:
-        # necesario primero eliminar dependecias SI existen
+            # necesario primero eliminar dependecias SI existen
+            # simulation component & simulation
+            query = SimulationComponent.query.filter_by(id_component=id_component)
+            
+            query_list = []
+            for simulation_component in query: 
+                query_list.append(Simulation.query.filter_by(id=simulation_component.id_simulation))
+
+            for querys in query_list:
+                for simulation in querys:
+                    SimulationComponent.query.filter_by(id_simulation = simulation.id).delete()
+            db.session.commit()
+
+            for simulation in query_list:
+                simulation.delete()
+            db.session.commit()
+
+            # compatible
             query1 = Compatible.query.filter_by(id_component=id_component)
             query1.delete()
             db.session.commit()
@@ -661,6 +695,7 @@ def simulator_buy():
         pc_cooling = request.get_json()['pc_cooling']
         peripherals = request.get_json()['peripherals']
 
+        """
         precio_total = verificar_todo(motherboard, MotherBoard, matriz, precio_total)
         precio_total = verificar_todo(psu, Component, matriz, precio_total)
         precio_total = verificar_todo(cpu, Component, matriz, precio_total)
@@ -672,10 +707,36 @@ def simulator_buy():
 
         for peripheral in peripherals:
             precio_total = verificar_todo(peripheral, Component, matriz, precio_total)
+        """
+        simulation = Simulation(id_motherboard=motherboard, create_by=current_user.id)
+        db.session.add(simulation)
 
+        components_list_verified = []
+        total_price = MotherBoard.query.get(motherboard).price
 
-        response['precio_total'] = round(precio_total, 2)
-        response['matriz'] = matriz
+        def check_component(component_id, components_list_verified):
+            if component_id == 0:
+                pass
+            if Component.query.get(component_id) is None:
+                pass
+            else:
+                components_list_verified.append(component_id)
+        
+        components_list = peripherals + [psu] + [cpu] + [hdd] + [ram] + [ssd] + [gpu] + [pc_cooling]
+        for component in components_list:
+            check_component(component, components_list_verified)
+        
+        for component in components_list_verified:
+            total_price += Component.query.get(component).price
+            db.session.add(SimulationComponent(id_simulation=simulation.id, id_component=component))
+
+        simulation.total_price = total_price
+
+        db.session.commit()
+
+        response['id_simulation'] = simulation.id
+#        response['precio_total'] = round(precio_total, 2)
+#        response['matriz'] = matriz
 
     except Exception as e:
         response['error'] = True
@@ -685,6 +746,37 @@ def simulator_buy():
         db.session.close()
 
     return jsonify(response)
+
+@app.route('/simulation/<id_simulation>')
+@login_required
+def simulation(id_simulation):
+    try:
+        # getting the simulation
+        simulation = Simulation.query.get(id_simulation)
+        # la simulacion no le pertence
+        if simulation.create_by != current_user.id:
+            abort(401)
+        # getting the motherboard from the simulation
+        motherboard = MotherBoard.query.get(simulation.id_motherboard)
+        # getting the id from components
+        simulation_components = SimulationComponent.query.filter_by(id_simulation = id_simulation)
+        # getting the components from id simulation_components
+        components = []
+        for component in simulation_components:
+            components.append(Component.query.get(component.id_component))
+
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        abort(500)
+    finally:
+        db.session.close()
+    
+    return render_template('simulation.html',
+        simulation=simulation,
+        motherboard=motherboard,
+        components=components
+    )
 
 @app.route('/buy/<precio_total>/<lista>')
 @login_required

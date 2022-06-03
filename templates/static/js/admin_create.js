@@ -80,12 +80,14 @@ document.getElementById('form_component').onsubmit = function(e) {
             alert("COMPONENT ADDED SUCCESSFULLY");
             document.getElementById('form_component').reset();
 
-            // create option and fill
-            let option = document.createElement('option');
-            option.setAttribute('value', jsonResponse['child_id']);
-            option.innerHTML = jsonResponse['child_name'];
-            // append child to options in motherboard in compatible form
-            document.getElementById('id_component').appendChild(option);
+            if (jsonResponse['has_child']){
+                // create option and fill
+                let option = document.createElement('option');
+                option.setAttribute('value', jsonResponse['child_id']);
+                option.innerHTML = jsonResponse['child_name'];
+                // append child to options in motherboard in compatible form
+                document.getElementById('id_component').appendChild(option);
+            }
         }
         else {
             // when register is NOT successful
